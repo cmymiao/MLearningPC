@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="page" class="row">
+            <div id="guide" class="col-md-3 col-xs-3">
+                <ul class="nav nav-pills nav-stacked" style="margin-top:100px">
+                    <li class="active"><a href="#classInfo" data-toggle="pill">班级信息管理</a></li>
+                    <li><a href="#studentInfo" data-toggle="pill">学生信息管理</a></li>
+                </ul>
+            </div>
+            <div id="content" class="col-md-9 col-xs-9">
+                <div class="tab-content">
+                    <div ng-controller="classCtrl" id="classInfo" class="tab-pane fade in active">
+                        <div ng-include="'ClassView/classInfo.html'"></div>
+                    </div>
+                    <div ng-controller="classCtrl" id="studentInfo" class="tab-pane fade">
+                        <div ng-include="'ClassView/studentInfo.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../JavaScript/myJS/homeJs.js"></script>
+</body>
+</html>

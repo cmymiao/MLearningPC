@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>主页</title>
+	<meta charset="utf-8" />
+    <script src="../JavaScript/common/angular.min.js"></script>
+    <script src="../JavaScript/common/jquery.min.js"></script>
+    <script src="../JavaScript/common/bootstrap.min.js"></script>
+    <script src="../JavaScript/common/ui-bootstrap-tpls.min.js"></script>
+    <link rel="stylesheet" href="../CSS/common/bootstrap.min.css" />    
+    
+</head>
+<body ng-app="myApp">
+    <div class="container-fluid">
+        <div id="header" class="row" style="margin-top:0">
+            <ng-include src="'header.html'"></ng-include>
+        </div>
+        <div class="row tab-content">
+            <div ng-controller="myCtrl" id="home" class="tab-pane fade in active">
+                <div ng-include="'introduction.html'"></div>
+            </div>
+            <div ng-controller="classCtrl" id="class" class="tab-pane fade">
+                <div ng-include="'ClassView/classHomePage.html'"></div>
+            </div>
+            <div ng-controller="courseCtrl" id="course" class="tab-pane fade">
+                <div ng-include="'CourseView/courseHomePage.html'"></div>
+            </div>
+        </div>
+        <!--<div id="footer" class="row">
+            <ng-include src="'footer.html'"></ng-include>
+        </div>-->
+    </div>
+    <script src="../JavaScript/myJS/homeJs.js"></script>
+</body>
+</html>

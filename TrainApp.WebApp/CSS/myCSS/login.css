@@ -1,0 +1,13 @@
+﻿.topbar_color{
+    background:#b5d5ff;
+}
+.topbar_bg{
+    background:url(../../image/topbar_bg.png) no-repeat center;
+    background-size:contain;
+    padding:50px;
+}
+.login_window{
+    margin-top:100px;
+}
+
+
