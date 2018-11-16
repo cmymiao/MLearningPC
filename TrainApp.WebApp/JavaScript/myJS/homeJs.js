@@ -196,6 +196,10 @@ app.controller('updateClassCtrl', function ($scope, $http, $modalInstance, data)
 
 })
 
+app.controller('studentCtrl', function ($scope, $http) {
+
+})
+
 app.controller('courseCtrl', function ($scope, $http) {
     $scope.b = 2;
 })
