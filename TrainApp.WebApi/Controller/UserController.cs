@@ -38,7 +38,7 @@ namespace TrainApp.WebApi
                 if (future.Result.identity.Equals("teacher"))
                 {
                     id = "登录成功" + future.Result.objectId;
-                    HttpCookie cookie = new HttpCookie("UserInfo");
+                    HttpCookie cookie = new HttpCookie("UserInfoRemember");
                     cookie["UserName"] = username;
                     HttpContext.Current.Response.Cookies.Add(cookie);
                 }
