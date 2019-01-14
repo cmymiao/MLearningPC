@@ -4,11 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>主页</title>
 	<meta charset="utf-8" />
+
+    <link rel="stylesheet" href="../CSS/common/bootstrap.min.css" />
+
     <script src="../JavaScript/common/angular.min.js"></script>
     <script src="../JavaScript/common/jquery.min.js"></script>
     <script src="../JavaScript/common/bootstrap.min.js"></script>
     <script src="../JavaScript/common/ui-bootstrap-tpls.min.js"></script>
-    <link rel="stylesheet" href="../CSS/common/bootstrap.min.css" />    
+    <script src="../JavaScript/common/xlsx.core.min.js"></script>
+    <script src="../JavaScript/common/Bmob-1.6.3.min.js"></script>
     
 </head>
 <body ng-app="myApp">
@@ -17,13 +21,13 @@
             <ng-include src="'header.html'"></ng-include>
         </div>
         <div class="row tab-content">
-            <div ng-controller="myCtrl" id="home" class="tab-pane fade in active">
+            <div id="home" class="tab-pane fade in active">
                 <div ng-include="'introduction.html'"></div>
             </div>
-            <div ng-controller="classCtrl" id="class" class="tab-pane fade">
+            <div id="class" class="tab-pane fade">
                 <div ng-include="'ClassView/classHomePage.html'"></div>
             </div>
-            <div ng-controller="courseCtrl" id="course" class="tab-pane fade">
+            <div id="course" class="tab-pane fade">
                 <div ng-include="'CourseView/courseHomePage.html'"></div>
             </div>
         </div>

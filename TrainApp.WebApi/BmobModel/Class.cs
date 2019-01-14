@@ -12,6 +12,8 @@ namespace TrainApp.WebApi.BmobModel
         public String name { get; set; }
         public String schedule { get; set; }
 
+        public String tId { get; set; }
+
         //读字段信息
         public override void readFields(BmobInput input)
         {
@@ -20,6 +22,7 @@ namespace TrainApp.WebApi.BmobModel
             this.id = input.getString("id");
             this.name = input.getString("name");
             this.schedule = input.getString("schedule");
+            this.tId = input.getString("tId");
         }
 
         public override void write(BmobOutput output, bool all)
@@ -29,6 +32,7 @@ namespace TrainApp.WebApi.BmobModel
             output.Put("id", this.id);
             output.Put("name", this.name);
             output.Put("schedule", this.schedule);
+            output.Put("tId", this.tId);
         }
     }
 }
