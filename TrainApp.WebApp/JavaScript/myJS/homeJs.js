@@ -714,5 +714,5 @@ app.controller('addQuestionCtrl', function ($scope, $http, $modalInstance, data)
 })
 
 app.controller('statisticCtrl', function ($scope, $http) {
-    $scope.b = 2;
+    $scope.b = 3;
 })
