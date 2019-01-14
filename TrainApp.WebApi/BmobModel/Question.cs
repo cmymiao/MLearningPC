@@ -29,7 +29,6 @@ namespace TrainApp.WebApi.BmobModel
         public override void readFields(BmobInput input)
         {
             base.readFields(input);
-
             this.id = input.getInt("id");
             this.difficulty = input.getInt("difficulty");
             this.totalNum = input.getInt("totalNum");
@@ -52,7 +51,6 @@ namespace TrainApp.WebApi.BmobModel
         public override void write(BmobOutput output, bool all)
         {
             base.write(output, all);
-
             output.Put("id", this.id);
             output.Put("difficulty", this.difficulty);
             output.Put("totalNum", this.totalNum);

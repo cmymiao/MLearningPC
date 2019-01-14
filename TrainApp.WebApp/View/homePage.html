@@ -11,8 +11,7 @@
     <script src="../JavaScript/common/jquery.min.js"></script>
     <script src="../JavaScript/common/bootstrap.min.js"></script>
     <script src="../JavaScript/common/ui-bootstrap-tpls.min.js"></script>
-    <script src="../JavaScript/common/xlsx.core.min.js"></script>
-    <script src="../JavaScript/common/Bmob-1.6.3.min.js"></script>
+    <link rel="stylesheet" href="../CSS/common/bootstrap.min.css" />    
     
 </head>
 <body ng-app="myApp">
@@ -29,6 +28,12 @@
             </div>
             <div id="course" class="tab-pane fade">
                 <div ng-include="'CourseView/courseHomePage.html'"></div>
+            </div>
+            <div ng-controller="questionCtrl" id="question" class="tab-pane fade">
+                <div ng-include="'QuestionView/questionHomePage.html'"></div>
+            </div>
+            <div ng-controller="statisticCtrl" id="statistic" class="tab-pane fade">
+                <div ng-include="'StatisticView/statisticHomePage.html'"></div>
             </div>
         </div>
         <!--<div id="footer" class="row">

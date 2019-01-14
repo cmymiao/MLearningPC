@@ -59,6 +59,30 @@ namespace TrainApp.WebApi
 
         }
 
-
+        [Route("SelectedUnit")]
+        [HttpGet]
+        public object GetSelectedUnit(int courseId)
+        {
+            var query = new BmobQuery();
+            query.WhereEqualTo("courseId", courseId);
+            var future = Bmob.FindTaskAsync<Unit>("Unit", query);
+            try
+            {
+                unitList = future.Result.results;
+                foreach (var u in unitList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Unit_View unit_view = new Unit_View();
+                    unit_view.id = u.id.Get();
+                    unit_view.name = u.name;
+                    unit_view.courseId = u.courseId.Get();
+                    uList.Add(unit_view);
+                }
+                return ResultToJson.toJson(uList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
+        }
     }
 }

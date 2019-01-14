@@ -100,6 +100,12 @@
     <Content Include="View\header.html" />
     <Content Include="View\homePage.html" />
     <Content Include="View\introduction.html" />
+    <Content Include="View\QuestionView\queryQuestion.html" />
+    <Content Include="View\QuestionView\questionHomePage.html" />
+    <Content Include="View\QuestionView\questionInfo.html" />
+    <Content Include="View\StatisticView\questionStatistic.html" />
+    <Content Include="View\StatisticView\statisticHomePage.html" />
+    <Content Include="View\StatisticView\studentStatistic.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -108,9 +114,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="View\QuestionView\" />
     <Folder Include="View\ResourceView\" />
-    <Folder Include="View\StatisticView\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

@@ -1,0 +1,101 @@
+app.controller('uploadAllQuestionCtrl', function ($scope, $http) {
+app.directive('file', function () {
+    return {
+        scope: {
+            file: '='
+        },
+        link: function (scope, el, attrs) {
+            el.bind('change', function (event) {
+                var file = event.target.files;
+                scope.file = file ? file : undefined;
+                scope.$apply();
+            });
+        }
+    };
+})
+    $scope.fileChanged = function (ele) {
+
+        $scope.files = ele.files;
+        var file = document.querySelector('input[type=file]').files[0];
+
+        var filename = $scope.files[0].name;
+
+        if (filename.length > 1 && filename) {
+
+            var ldot = filename.lastIndexOf(".");
+
+            var type = filename.substring(ldot + 1);  //文件类型
+
+            $scope.fileName = filename.slice(0, ldot);//文件名    
+
+            //读取文件内容  
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                try {
+                    var data = ev.target.result,
+                        workbook = XLSX.read(data, {
+                            type: 'binary'
+                        }), // 以二进制流方式读取得到整份excel表格对象
+                        persons = []; // 存储获取到的数据
+                } catch (e) {
+                    console.log('文件类型不正确');
+                    return;
+                }
+                // 表格的表格范围，可用于判断表头是否数量是否正确
+                var fromTo = '';
+                // 遍历每张表读取
+                for (var sheet in workbook.Sheets) {
+                    if (workbook.Sheets.hasOwnProperty(sheet)) {
+                        fromTo = workbook.Sheets[sheet]['!ref'];
+                        console.log(fromTo);
+                        persons = persons.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
+                        // break; // 如果只取第一张表，就取消注释这行
+                    }
+                }
+                console.log(persons);
+                $scope.p = persons;
+                $http({
+                    method: 'POST',
+                    contentType: 'application/json',
+                    url: 'http://localhost:5451/TrainApp/GetQuestion',
+                    data: JSON.stringify(persons)
+                }).then(function successCallback(response) {
+                    $scope.question = response.data;
+                }, function errorCallback(response) {
+                });
+                $scope.$apply(); //传播Model的变化。//很重要，等文件内容读出完以后，开启脏检测,这样就将文件名字，内容绑定到界面上显示
+            }
+
+
+            reader.readAsBinaryString(file);
+        }
+
+    }
+    $scope.uploadQuestion = function () {
+        //alert("正在上传···请等待");
+        document.getElementById("upload").innerText = "正在上传请稍后...";
+        $http({
+            method: 'POST',
+            url: 'http://localhost:5451/TrainApp/UploadQuestion',
+            data: JSON.stringify($scope.p)
+        }).then(function successCallback(response) {
+            $scope.objectId = response.data;
+            alert($scope.objectId);
+            document.getElementById("upload").innerText = "Submit";
+        }, function errorCallback(response) {
+
+        });
+    }
+    $scope.showAllQuestion = function () {
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowQuestion',
+        }).then(function successCallback(response) {
+            $scope.questions = response.data;
+        }, function errorCallback(response) {
+            alert("获取数据失败");
+        });
+    }
+
+    $scope.showAllQuestion();
+})

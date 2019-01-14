@@ -7,6 +7,7 @@ namespace TrainApp.WebApi.ViewModel
 {
     public class Question_View          //显示的实体类
     {
+        public String objectId { get; set; }
         public int id { get; set; }
         public int difficulty { get; set; }
         public int totalNum { get; set; }

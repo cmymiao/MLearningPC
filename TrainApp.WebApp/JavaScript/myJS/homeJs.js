@@ -720,6 +720,6 @@ app.controller('addCourseCtrl', function ($scope, $http, $modalInstance, data) {
 
 })
 
-app.controller('unitCtrl', function ($scope, $http) {
-    
+app.controller('courseCtrl', function ($scope, $http) {
+    $scope.b = 2;
 })

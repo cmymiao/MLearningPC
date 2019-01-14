@@ -40,6 +40,35 @@ namespace TrainApp.WebApi
             return ResultToJson.toJson(kList);      //返回数据需要json格式
 
         }
-
+        [Route("SelectedKnowledge")]
+        [HttpGet]
+        public object GetSelectedKnowledge(int unitId,int courseId)
+        {
+            String objectId = "";
+            var query = new BmobQuery();
+            query.WhereEqualTo("courseId", courseId);
+            var f = Bmob.FindTaskAsync<Knowledge>("Knowledge", query);
+            try
+            {
+                query.WhereEqualTo("unitId", unitId);
+                var future = Bmob.FindTaskAsync<Knowledge>("Knowledge", query);
+                knowledgeList = future.Result.results;
+                foreach (var k in knowledgeList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    objectId = f.Result.results[0].objectId;
+                    Knowledge_View knowledge_view = new Knowledge_View();
+                    knowledge_view.id = k.id.Get();
+                    knowledge_view.name = k.name;
+                    knowledge_view.courseId = k.courseId.Get();
+                    knowledge_view.unitId = k.unitId.Get();
+                    kList.Add(knowledge_view);
+                }
+                return ResultToJson.toJson(kList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
+        }
     }
 }
