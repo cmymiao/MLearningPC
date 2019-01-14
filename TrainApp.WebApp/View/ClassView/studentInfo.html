@@ -13,16 +13,124 @@
         <div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">上传学生名单</h4>
         </div>
-        <div class="row"style="margin-top:10px">
-            <p>文件选择</p>
+        <div class="row" style="margin-top:10px">
+            <form>
+                <h4>请选择excel文件上传数据</h4>
+                <div class="form-group">
+                    <input type="file" name="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' /><br>
+                    <button type="submit" class="btn btn-primary" ng-click="addStudent()">上传</button>
+                </div>
+            </form>
         </div>
         <div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">学生信息</h4>
         </div>
         <div class="row" style="margin-top:10px">
-            <p>班级筛选</p>
-            <p>学生信息显示</p>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        请选择想要查看的班级
+                    </label>
+                    <div class="col-xs-4">
+                        <select ng-model="classId" class="form-control" ng-options="class.id as class.name for class in classes" ng-change="showStudentByClass(classId)" ng-click="showAllClass()">
+                            <option value="">--显示全部学生信息--</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row text-right" style="margin-top:20px;margin-right:50px">
+            <button class="btn btn-primary" ng-click="openAddStudent()">添加</button>
+            <button class="btn btn-danger" ng-click="deleteStudent()">删除</button>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <table class="table table-hover" style="width:100%">
+                <thead>
+                    <tr class="text-center" style="background:#b5d5ff">
+                        <td style="width:5%"><input type="checkbox" ng-model="$parent.allChecked" ng-change="chooseAll()" /></td>
+                        <td style="width:5%">序号</td>
+                        <td style="width:10%">学号</td>
+                        <td style="width:10%">姓名</td>
+                        <td style="width:10%">昵称</td>
+                        <td style="width:20%">班级</td>
+                        <td style="width:20%">电话</td>
+                        <td style="width:20%">邮箱</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="student in items" class="text-center">
+                        <td><input type="checkbox" ng-model="student.checked" ng-click="chooseClass($index)" /></td>
+                        <td>{{$index + 1}}</td>
+                        <td>{{student.username}}</td>
+                        <td>{{student.name}}</td>
+                        <td>{{student.nickname}}</td>
+                        <td>{{student.classId}}</td>
+                        <td>{{student.mobilePhoneNumber}}</td>
+                        <td>{{student.email}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <nav class="text-center">
+                <ul class="pagination">
+                    <li>
+                        <a ng-click="Previous()">
+                            <span>上一页</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="page in pageList" ng-class="{active: isActivePage(page)}">
+                        <a ng-click="selectPage(page)">{{ page }}</a>
+                    </li>
+                    <li>
+                        <a ng-click="Next()">
+                            <span>下一页</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
     </div>
+
+    <script type="text/ng-template" id="addStudent.html">
+        <div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="title">请填写学生信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">学号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="username" placeholder="学号(必填项)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="name" placeholder="姓名(必填项)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="password" placeholder="初始密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">确认密码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="passwordAgain" placeholder="再次输入密码">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="closeDialog()">取消</button>
+                <button type="button" class="btn btn-primary" ng-click="submitClassInfo()">确认</button>
+            </div>
+        </div>
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body ng-controller="courseCtrl">
+    <div class="container-fluid">
+        <div class="row text-center" style="margin-top:20px">
+            <h2>{{courseName}}</h2>
+        </div>
+        <div class="row text-right" style="margin-top:20px;margin-right:50px">
+            <button class="btn btn-primary" ng-click="openAddCourse()">添加</button>
+            <button class="btn btn-danger" ng-click="deleteCourse()">删除</button>
+            <button class="btn btn-success" ng-click="modifyCourseInfo()">修改</button>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <table class="table table-hover" style="width:100%">
+                <thead>
+                    <tr class="text-center" style="background:#b5d5ff">
+                        <td><input type="checkbox" ng-model="$parent.allChecked" ng-change="chooseAll()" /></td>
+                        <td>序号</td>
+                        <td>课程号</td>
+                        <td>课程名称</td>
+                        <td>课程大纲</td>
+                        <td>实验大纲</td>
+                        <td>教学日历</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="course in courses" class="text-center">
+                        <td><input type="checkbox" ng-model="course.checked" ng-click="chooseCourse($index)" /></td>
+                        <td>{{$index + 1}}</td>
+                        <td>{{course.id}}</td>
+                        <td>{{course.name}}</td>
+                        <td><button class="btn btn-primary" ng-click="showFileContent($index, 1)">{{course.programs}}</button></td>
+                        <td><button class="btn btn-primary" ng-click="showFileContent($index, 2)">{{course.experiments}}</button></td>
+                        <td><button class="btn btn-primary" ng-click="showFileContent($index, 3)">{{course.times}}</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="addCourses.html">
+        <div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="title">请填写课程信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">课程号</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="courseId" placeholder="课程号(必填项)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">课程名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="courseName" placeholder="课程名称(必填项)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">课程大纲</label>
+                        <div class="col-sm-8">
+                            <input type="file" name="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary" ng-click="addFile(1)">上传</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">实验大纲</label>
+                        <div class="col-sm-8">
+                            <input type="file" name="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary" ng-click="addFile(2)">上传</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">教学日历</label>
+                        <div class="col-sm-8">
+                            <input type="file" name="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary" ng-click="addFile(3)">上传</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="closeDialog()">取消</button>
+                <button type="button" class="btn btn-primary" ng-click="submitCourseInfo()">确认</button>
+            </div>
+        </div>
+    </script>
+
+</body>
+</html>

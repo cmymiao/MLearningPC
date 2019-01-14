@@ -10,6 +10,7 @@ namespace TrainApp.WebApi.BmobModel
     {
         public BmobInt id { get; set; }
         public String name { get; set; }
+        public String tId { get; set; }
         public BmobFile program { get; set; }
         public BmobFile experiment { get; set; }
         public BmobFile time { get; set; }
@@ -22,6 +23,7 @@ namespace TrainApp.WebApi.BmobModel
             //读取属性值
             this.id = input.getInt("id");
             this.name = input.getString("name");
+            this.tId = input.getString("tId");
             this.program = input.getFile("program");
             this.experiment = input.getFile("experiment");
             this.time = input.getFile("time");
@@ -34,6 +36,7 @@ namespace TrainApp.WebApi.BmobModel
             //写到发送端
             output.Put("id", this.id);
             output.Put("name", this.name);
+            output.Put("tId", this.tId);
             output.Put("program", this.program);
             output.Put("experiment", this.experiment);
             output.Put("time", this.time);

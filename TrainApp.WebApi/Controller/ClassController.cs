@@ -20,7 +20,10 @@ namespace TrainApp.WebApi.Controller
         [HttpGet]
         public object GetClassInfo()
         {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
+            String username = cookie["username"].ToString();
             var query = new BmobQuery();
+            query.WhereEqualTo("tId", username);
             var future = Bmob.FindTaskAsync<Class>("Class", query);
             try
             {
@@ -38,6 +41,9 @@ namespace TrainApp.WebApi.Controller
         [HttpPost]
         public object PostAddClass([FromBody]Class classInfo)
         {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
+            String username = cookie["username"].ToString();
+            classInfo.tId = username;
             var future = Bmob.CreateTaskAsync("Class", classInfo);
             String id = future.Result.objectId;
             return id;

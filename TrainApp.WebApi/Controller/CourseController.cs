@@ -37,7 +37,7 @@ namespace TrainApp.WebApi
                     course_view.timeu = c.time.url;          
                 }
                 else { 
-                    course_view.times = "无";
+                    course_view.times = "暂无教学日历";
                     course_view.timeu = "";
                 }
                 if (c.program != null) {
@@ -45,16 +45,16 @@ namespace TrainApp.WebApi
                     course_view.programu = c.program.url;
                 }
                 else {
-                    course_view.programs = "无";
-                    course_view.programu = "../inview/class1.html";
+                    course_view.programs = "暂无课程大纲";
+                    course_view.programu = "";
                 }
                 if (c.experiment != null) {
                     course_view.experiments = "查看实验大纲";
                     course_view.experimentu = c.experiment.url;
                 }
                 else {
-                    course_view.experiments = "无";
-                    course_view.experimentu = "../inview/class1.html";
+                    course_view.experiments = "暂无实验大纲";
+                    course_view.experimentu = "";
                 }
                 cList.Add(course_view);
                 
@@ -65,65 +65,83 @@ namespace TrainApp.WebApi
 
 
 
-        [Route("Select")]
-        [HttpGet]
-        public object Getselect(int id)
+        //[Route("Select")]
+        //[HttpGet]
+        //public object Getselect(int id)
+        //{
+        //    var query = new BmobQuery();
+        //    query.WhereEqualTo("id", id);
+        //    var future = Bmob.FindTaskAsync<Course>("Course", query);
+        //    try
+        //    {
+        //        courseList = future.Result.results;
+        //        foreach (var c in courseList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+        //        {
+        //            Course_View course_view = new Course_View();
+        //            course_view.id = c.id.Get();
+        //            course_view.name = c.name;
+        //            if (c.time != null)
+        //            {
+        //                course_view.times = "查看教学日历";
+        //                course_view.timeu = c.time.url;
+        //            }
+        //            else
+        //            {
+        //                course_view.times = "上传教学日历";
+        //                course_view.timeu = "../inview/upload3.html";
+        //            }
+        //            if (c.program != null)
+        //            {
+        //                course_view.programs = "查看课程大纲";
+        //                course_view.programu = c.program.url;
+        //            }
+        //            else
+        //            {
+        //                course_view.programs = "上传课程大纲";
+        //                course_view.programu = "../inview/upload1.html";
+        //            }
+        //            if (c.experiment != null)
+        //            {
+        //                course_view.experiments = "查看实验大纲";
+        //                course_view.experimentu = c.experiment.url;
+        //            }
+        //            else
+        //            {
+        //                course_view.experiments = "上传实验大纲";
+        //                course_view.experimentu = "../inview/upload2.html";
+        //            }
+        //            cList.Add(course_view);
+        //        }
+        //        return ResultToJson.toJson(cList);
+        //    }
+        //    catch
+        //    {
+        //        return "获取失败";
+        //    }
+
+        //}
+
+        [Route("addCourse")]
+        [HttpPost]
+        public object PostAddCourse([FromBody]Course_View cl)
         {
-            var query = new BmobQuery();
-            query.WhereEqualTo("id", id);
-            var future = Bmob.FindTaskAsync<Course>("Course", query);
+            String a = "";
+            Course course = new Course();
+            course.id = BmobInput.Parse<BmobInt>(cl.id);
+            course.name = cl.name;
+            course.program = cl.program;
+            course.experiment = cl.experiment;
+            course.time = cl.time;
+            var future = Bmob.CreateTaskAsync("Course", course);
             try
             {
-                courseList = future.Result.results;
-                foreach (var c in courseList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
-                {
-                    Course_View course_view = new Course_View();
-                    course_view.id = c.id.Get();
-                    course_view.name = c.name;
-                    if (c.time != null)
-                    {
-                        course_view.times = "查看教学日历";
-                        course_view.timeu = c.time.url;
-                    }
-                    else
-                    {
-                        course_view.times = "上传教学日历";
-                        course_view.timeu = "../inview/upload3.html";
-                    }
-                    if (c.program != null)
-                    {
-                        course_view.programs = "查看课程大纲";
-                        course_view.programu = c.program.url;
-                    }
-                    else
-                    {
-                        course_view.programs = "上传课程大纲";
-                        course_view.programu = "../inview/upload1.html";
-                    }
-                    if (c.experiment != null)
-                    {
-                        course_view.experiments = "查看实验大纲";
-                        course_view.experimentu = c.experiment.url;
-                    }
-                    else
-                    {
-                        course_view.experiments = "上传实验大纲";
-                        course_view.experimentu = "../inview/upload2.html";
-                    }
-                    cList.Add(course_view);
-                }
-                return ResultToJson.toJson(cList);
-            }
-            catch
+                a = "success";
+            }catch
             {
-                return "获取失败";
+                a = "fail";
             }
-
+            return a;
         }
-
-
-   
-
 
         [Route("uploadfile")]
         [HttpPost]
@@ -133,7 +151,10 @@ namespace TrainApp.WebApi
             String objectId = "";
             Course course = new Course();
             course.id = BmobInput.Parse<BmobInt>(cl.id);
+            course.name = cl.name;
             course.program = cl.program;
+            course.experiment = cl.experiment;
+            course.time = cl.time;
             var query = new BmobQuery();
             query.WhereEqualTo("id", course.id);
             var f = Bmob.FindTaskAsync<Course>("Course", query);
@@ -151,57 +172,57 @@ namespace TrainApp.WebApi
             return a;
         }
 
-        [Route("uploadfilee")]
-        [HttpPost]
-        public object PostFilee([FromBody]Course_View cl)
-        {
-            String a = "";
-            String objectId = "";
-            Course course = new Course();
-            course.id = BmobInput.Parse<BmobInt>(cl.id);
-            course.experiment = cl.experiment;
-            var query = new BmobQuery();
-            query.WhereEqualTo("id", course.id);
-            var f = Bmob.FindTaskAsync<Course>("Course", query);
-            try
-            {
+        //[Route("uploadfilee")]
+        //[HttpPost]
+        //public object PostFilee([FromBody]Course_View cl)
+        //{
+        //    String a = "";
+        //    String objectId = "";
+        //    Course course = new Course();
+        //    course.id = BmobInput.Parse<BmobInt>(cl.id);
+        //    course.experiment = cl.experiment;
+        //    var query = new BmobQuery();
+        //    query.WhereEqualTo("id", course.id);
+        //    var f = Bmob.FindTaskAsync<Course>("Course", query);
+        //    try
+        //    {
 
-                objectId = f.Result.results[0].objectId;
-                var future = Bmob.UpdateTaskAsync("Course", objectId, course);
-                a = future.Result.updatedAt;
-            }
-            catch
-            {
-                a = "失败";
-            }
-            return a;
-        }
+        //        objectId = f.Result.results[0].objectId;
+        //        var future = Bmob.UpdateTaskAsync("Course", objectId, course);
+        //        a = future.Result.updatedAt;
+        //    }
+        //    catch
+        //    {
+        //        a = "失败";
+        //    }
+        //    return a;
+        //}
 
-        [Route("uploadfilet")]
-        [HttpPost]
-        public object PostFilet([FromBody]Course_View cl)
-        {
-            String a = "";
-            String objectId = "";
-            Course course = new Course();
-            course.id = BmobInput.Parse<BmobInt>(cl.id);
-            course.time = cl.time;
-            var query = new BmobQuery();
-            query.WhereEqualTo("id", course.id);
-            var f = Bmob.FindTaskAsync<Course>("Course", query);
-            try
-            {
+        //[Route("uploadfilet")]
+        //[HttpPost]
+        //public object PostFilet([FromBody]Course_View cl)
+        //{
+        //    String a = "";
+        //    String objectId = "";
+        //    Course course = new Course();
+        //    course.id = BmobInput.Parse<BmobInt>(cl.id);
+        //    course.time = cl.time;
+        //    var query = new BmobQuery();
+        //    query.WhereEqualTo("id", course.id);
+        //    var f = Bmob.FindTaskAsync<Course>("Course", query);
+        //    try
+        //    {
 
-                objectId = f.Result.results[0].objectId;
-                var future = Bmob.UpdateTaskAsync("Course", objectId, course);
-                a = future.Result.updatedAt;
-            }
-            catch
-            {
-                a = "失败";
-            }
-            return a;
-        }
+        //        objectId = f.Result.results[0].objectId;
+        //        var future = Bmob.UpdateTaskAsync("Course", objectId, course);
+        //        a = future.Result.updatedAt;
+        //    }
+        //    catch
+        //    {
+        //        a = "失败";
+        //    }
+        //    return a;
+        //}
 
         [Route("SelectCourse")]
         [HttpGet]
