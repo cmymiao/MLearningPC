@@ -1,5 +1,6 @@
 ﻿using cn.bmob.io;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +17,7 @@ namespace TrainApp.WebApi
         public Question question = new Question();
         public List<Question> questionList = new List<Question>();
         public List<Question_View> qList = new List<Question_View>();
+        public List<Question_View> questionSortList = new List<Question_View>();
 
 
         [HttpGet]                       //定义访问方式（Post或Get方法）
@@ -26,32 +28,56 @@ namespace TrainApp.WebApi
 
         }
 
-        public void QuestionInfo()              //查询函数
+        public void QuestionInfo()              //查询全部题目的函数
         {
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
+            String username = cookie["username"].ToString();
             var query = new BmobQuery();
-            query.Limit(300);
-            var future = Bmob.FindTaskAsync<Question>("Question", query);
-            questionList = future.Result.results;
-            foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+            query.WhereEqualTo("tId", username);
+            var future1 = Bmob.FindTaskAsync<Course>("Course", query);
+            try
             {
-                Question_View question_view = new Question_View();
-                question_view.objectId = q.objectId;
-                question_view.id = q.id.Get();
-                question_view.difficulty = q.difficulty.Get();
-                question_view.totalNum = q.totalNum.Get();
-                question_view.rightNum = q.rightNum.Get();
-                question_view.question = q.question;
-                question_view.a = q.a;
-                question_view.b = q.b;
-                question_view.c = q.c;
-                question_view.d = q.d;
-                question_view.answer = q.answer;
-                question_view.analysis = q.analysis;
-                question_view.courseId = q.courseId.Get();
-                question_view.unitId = q.unitId.Get();
-                question_view.knowledgeId = q.knowledgeId;
-                qList.Add(question_view);
+                int count = future1.Result.results.Count;
+                int[] courses = new int[count];
+                for (int i = 0; i < count; i++)
+                {
+                    courses[i] = future1.Result.results[i].id.Get();
+                }
+                var query1 = new BmobQuery();
+                query1.Limit(300);
+                query1.WhereContainedIn("courseId", courses);
+                var future = Bmob.FindTaskAsync<Question>("Question", query1);
+                try
+                {
+                    questionList = future.Result.results;
+                    foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                    {
+                        Question_View question_view = new Question_View();
+                        question_view.objectId = q.objectId;
+                        question_view.id = q.id.Get();
+                        question_view.difficulty = q.difficulty.Get();
+                        question_view.totalNum = q.totalNum.Get();
+                        question_view.rightNum = q.rightNum.Get();
+                        question_view.question = q.question;
+                        question_view.a = q.a;
+                        question_view.b = q.b;
+                        question_view.c = q.c;
+                        question_view.d = q.d;
+                        question_view.answer = q.answer;
+                        question_view.analysis = q.analysis;
+                        question_view.courseId = q.courseId.Get();
+                        question_view.unitId = q.unitId.Get();
+                        question_view.knowledgeId = q.knowledgeId;
+                        qList.Add(question_view);
+                    }
+
+                }
+                catch
+                {
+
+                }
             }
+            catch { }
             //如果需要对其中一行数据进行处理，可以记录每以条记录的object值，方便对Bmob数据库进行操作。
         }
 
@@ -124,6 +150,7 @@ namespace TrainApp.WebApi
             }
 
         }
+
         [Route("UploadQuestion")]
         [HttpPost]
         public object PostUploadQuestion([FromBody]List<Question_View> question1)
@@ -211,12 +238,14 @@ namespace TrainApp.WebApi
         public object GetQueryUnitQuestion(int courseId,int unitId)
         {
             var query = new BmobQuery();
+            query.Limit(300);
             query.WhereEqualTo("courseId", courseId);
-            var f = Bmob.FindTaskAsync<Question>("Question", query);
+            var query1 = new BmobQuery();  
+            query1.WhereEqualTo("unitId", unitId);
+            query = query.And(query1);
+            var future = Bmob.FindTaskAsync<Question>("Question", query);
             try
             {
-                query.WhereEqualTo("unitId", unitId);
-                var future = Bmob.FindTaskAsync<Question>("Question", query);
                 questionList = future.Result.results;
                 foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
                 {
@@ -298,6 +327,46 @@ namespace TrainApp.WebApi
         }
 
 
+        //单元题目答题情况统计
+        [Route("QuestionStatistic")]
+        [HttpGet]
+        public object GetQuestionStatistic(int courseId, int unitId)
+        {
+            var query = new BmobQuery();
+            query.Limit(300);
+            query.WhereEqualTo("courseId", courseId);
+            var query1 = new BmobQuery();
+            query1.WhereEqualTo("unitId", unitId);
+            query = query.And(query1);
+            //query.OrderByDescending("rightNum");
+            var future = Bmob.FindTaskAsync<Question>("Question", query);
+            try
+            {
+                questionList = future.Result.results;
+                foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Question_View question_view = new Question_View();
+                    question_view.id = q.id.Get();
+                    question_view.question = q.question;
+                    question_view.totalNum = q.totalNum.Get();
+                    question_view.rightNum = q.rightNum.Get();
+      
+                    if(question_view.totalNum != 0)
+                    {
+                        question_view.accuracy = 100 * question_view.rightNum / question_view.totalNum;
+                    }
+                    qList.Add(question_view);
+                }
+
+                questionSortList = qList.OrderByDescending(s => s.accuracy).ToList();
+
+                return ResultToJson.toJson(questionSortList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
+        }
 
 
     }

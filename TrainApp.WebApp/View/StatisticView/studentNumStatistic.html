@@ -5,10 +5,10 @@
     <title></title>
     <meta charset="utf-8" />
 </head>
-<body ng-controller="statisticCtrl">
+<body ng-controller="studentStatisticCtrl">
     <div class="container-fluid">
         <div class="row text-center" style="margin-top:20px">
-            <h2>单元题目答题情况统计</h2>
+            <h2>学生答题情况统计</h2>
         </div>
         <div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">选择知识单元</h4>
@@ -17,17 +17,22 @@
             <form class="form-horizontal">
                 <div class="form-group">
                     <div class="col-xs-3">
+                        <select ng-model="classId" class="form-control" ng-options="class.id as class.name for class in classInfo">
+                            <option value="">-----请选择班级-----</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
                         <select ng-model="courseId" class="form-control" ng-options="course.id as course.name for course in courseInfo" ng-change="selectedUnit(courseId)">
                             <option value="">-----请选择所属课程-----</option>
                         </select>
                     </div>
                     <div class="col-xs-3">
                         <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo">
-                            <option value="">------请选择课程单元------</option>
+                            <option value="">------全部课程单元------</option>
                         </select>
                     </div>
                     <div class="col-xs-1">
-                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="questionStatistic(courseId,unitId)">查询</button>
+                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryFeedback(classId,unitId,courseId)">查询</button>
                     </div>
                 </div>
             </form>
@@ -35,45 +40,45 @@
         <div class="row" style="background:#b5d5ff">
             <h4 style="margin-left:20px">统计结果</h4>
         </div>
-        <div class="row">           
+        <div class="row">
             <div class="col-xs-6" style="height:500px; overflow-x:auto; text-align:center;">
                 <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
-                    <caption class="caption" style ="font-size:20px; text-align:center;">正确率最高的15道题</caption>
+                    <caption class="caption" style="font-size:20px; text-align:center;">答题最多的5名同学</caption>
                     <thead style="overflow-x:auto;">
                         <tr class="text-center" style="background:#b5d5ff">
                             <td width="45px">序号</td>
-                            <td width="45px">编号</td>
-                            <td width="200px">题目内容</td>
-                            <td width="160px">正确率</td>
+                            <td width="100px">姓名</td>
+                            <td width="100px">昵称</td>
+                            <td width="100px">答题数量</td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="question in highQuestionInfo" class="text-center">
+                        <tr ng-repeat="feedback in highFeedbackInfo" class="text-center">
                             <td>{{$index + 1}}</td>
-                            <td>{{question.id}}</td>&nbsp;
-                            <td>{{question.question}}</td>
-                            <td>{{question.accuracy + "%"}}</td>
+                            <td>{{feedback.username}}</td>&nbsp;
+                            <td>{{feedback.nickname}}</td>
+                            <td>{{feedback.totalNum}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="col-xs-6" style="height:500px; overflow-x:auto; ">
                 <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
-                    <caption  class="caption" style ="font-size:20px; text-align:center">正确率最低的15道题</caption>
+                    <caption class="caption" style="font-size:20px; text-align:center">答题最少的5名同学</caption>
                     <thead>
                         <tr class="text-center" style="background:#b5d5ff">
                             <td width="45px">序号</td>
-                            <td width="45px">编号</td>
-                            <td width="200px">题目内容</td>
-                            <td width="160px">正确率</td>
+                            <td width="100px">姓名</td>
+                            <td width="100px">昵称</td>
+                            <td width="100px">答题数量</td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="question in lowQuestionInfo" class="text-center">
+                        <tr ng-repeat="feedback in lowFeedbackInfo" class="text-center">
                             <td>{{$index + 1}}</td>
-                            <td>{{question.id}}</td>&nbsp;
-                            <td>{{question.question}}</td>
-                            <td>{{question.accuracy + "%"}}</td>
+                            <td>{{feedback.username}}</td>&nbsp;
+                            <td>{{feedback.nickname}}</td>
+                            <td>{{feedback.totalNum}}</td>
                         </tr>
                     </tbody>
                 </table>

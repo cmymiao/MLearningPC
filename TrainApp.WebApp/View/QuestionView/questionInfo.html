@@ -7,20 +7,23 @@
 </head>
 <body ng-controller="questionCtrl">
     <div class="container-fluid">
+        <div class="row text-center" style="margin-top:20px">
+            <h2>上传全部习题</h2>
+        </div>
             <div class="row" style="margin-top:20px;background:#b5d5ff">
                 <h4 style="margin-left:20px">上传习题文件</h4>
             </div>
             <form>
-                <div class="centers">
+                <div class="centers" style="margin-top:20px;">
                     <h4>请选择Excel文件并上传</h4>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top:20px;">
                         <input type="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' /><br>
                         <button type="submit" id="upload" class="btn btn-primary" ng-click="uploadQuestion()">上传</button>
                     </div>
                 </div>
             </form>
-
-        <div class="row" style="margin-top:20px;background:#b5d5ff">
+    </div>
+        <!--<div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">习题信息</h4>
         </div>
         <div class="row text-right" style="margin-top:20px;margin-right:50px">
@@ -216,7 +219,7 @@
                 <button type="button" class="btn btn-primary" ng-click="submitQuestionInfo()">确认</button>
             </div>
         </div>
-    </script>
+    </script>-->
 
 </body>
 </html>

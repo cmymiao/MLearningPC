@@ -1,3 +1,4 @@
+统计表中知识单元未选择课程
 app.controller('uploadAllQuestionCtrl', function ($scope, $http) {
 app.directive('file', function () {
     return {
