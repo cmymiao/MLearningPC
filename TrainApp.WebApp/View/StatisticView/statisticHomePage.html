@@ -11,8 +11,9 @@
         <div id="page" class="row">
             <div id="guide" class="col-md-3 col-xs-3">
                 <ul class="nav nav-pills nav-stacked" style="margin-top:100px">
-                    <li class="active"><a href="#questionStatistic" data-toggle="pill">按题目统计</a></li>
-                    <li><a href="#studentStatistic" data-toggle="pill">按学生统计</a></li>
+                    <li class="active"><a href="#questionStatistic" data-toggle="pill">单元题目答题情况统计</a></li>
+                    <li><a href="#studentStatistic" data-toggle="pill">学生答题情况统计</a></li>
+                    <li><a href="#studentAnswersNumberStatistic" data-toggle="pill">学生答题数量统计</a></li>
                 </ul>
             </div>
             <div id="content" class="col-md-9 col-xs-9">
@@ -20,8 +21,11 @@
                     <div ng-controller="statisticCtrl" id="questionStatistic" class="tab-pane fade in active">
                         <div ng-include="'StatisticView/questionStatistic.html'"></div>
                     </div>
-                    <div ng-controller="statisticCtrl" id="studentStatistic" class="tab-pane fade">
+                    <div ng-controller="studentStatisticCtrl" id="studentStatistic" class="tab-pane fade">
                         <div ng-include="'StatisticView/studentStatistic.html'"></div>
+                    </div>
+                    <div ng-controller="studentNumStatisticCtrl" id="studentAnswersNumberStatistic" class="tab-pane fade">
+                        <div ng-include="'StatisticView/studentNumStatistic.html'"></div>
                     </div>
                 </div>
             </div>

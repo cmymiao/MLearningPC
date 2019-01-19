@@ -23,6 +23,8 @@ namespace TrainApp.WebApi.ViewModel
         public int unitId { get; set; }
         public String knowledgeId { get; set; }
         public String analysis { get; set; }
-       
+        public int accuracy { get; set; }
+
+
     }
 }
