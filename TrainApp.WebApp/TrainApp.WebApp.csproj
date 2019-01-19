@@ -71,6 +71,9 @@
     <Content Include="CSS\common\bootstrap.min.css" />
     <Content Include="CSS\myCSS\footer.css" />
     <Content Include="CSS\myCSS\login.css" />
+    <Content Include="CSS\myCSS\myCss.css" />
+    <Content Include="CSS\myCSS\style.css" />
+    <Content Include="image\loading.gif" />
     <Content Include="image\top.png" />
     <Content Include="image\topbar_bg.png" />
     <Content Include="JavaScript\common\angular.min.js" />

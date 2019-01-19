@@ -24,6 +24,9 @@ namespace TrainApp.WebApi
        public object Get()             //返回数据的函数，如果是Get方法则方法名为Get开头，若是Post则使用Post开头。
         {
             var query = new BmobQuery();
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
+            String username = cookie["username"].ToString();
+            query.WhereEqualTo("tId", username);
             query.Limit(300);
             var future = Bmob.FindTaskAsync<Course>("Course", query);
             courseList = future.Result.results;
@@ -65,73 +68,76 @@ namespace TrainApp.WebApi
 
 
 
-        //[Route("Select")]
-        //[HttpGet]
-        //public object Getselect(int id)
-        //{
-        //    var query = new BmobQuery();
-        //    query.WhereEqualTo("id", id);
-        //    var future = Bmob.FindTaskAsync<Course>("Course", query);
-        //    try
-        //    {
-        //        courseList = future.Result.results;
-        //        foreach (var c in courseList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
-        //        {
-        //            Course_View course_view = new Course_View();
-        //            course_view.id = c.id.Get();
-        //            course_view.name = c.name;
-        //            if (c.time != null)
-        //            {
-        //                course_view.times = "查看教学日历";
-        //                course_view.timeu = c.time.url;
-        //            }
-        //            else
-        //            {
-        //                course_view.times = "上传教学日历";
-        //                course_view.timeu = "../inview/upload3.html";
-        //            }
-        //            if (c.program != null)
-        //            {
-        //                course_view.programs = "查看课程大纲";
-        //                course_view.programu = c.program.url;
-        //            }
-        //            else
-        //            {
-        //                course_view.programs = "上传课程大纲";
-        //                course_view.programu = "../inview/upload1.html";
-        //            }
-        //            if (c.experiment != null)
-        //            {
-        //                course_view.experiments = "查看实验大纲";
-        //                course_view.experimentu = c.experiment.url;
-        //            }
-        //            else
-        //            {
-        //                course_view.experiments = "上传实验大纲";
-        //                course_view.experimentu = "../inview/upload2.html";
-        //            }
-        //            cList.Add(course_view);
-        //        }
-        //        return ResultToJson.toJson(cList);
-        //    }
-        //    catch
-        //    {
-        //        return "获取失败";
-        //    }
+        [Route("ShowCourseById")]
+        [HttpGet]
+        public object Getselect(int id)
+        {
+            var query = new BmobQuery();
+            query.WhereEqualTo("id", id);
+            var future = Bmob.FindTaskAsync<Course>("Course", query);
+            try
+            {
+                courseList = future.Result.results;
+                foreach (var c in courseList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Course_View course_view = new Course_View();
+                    course_view.id = c.id.Get();
+                    course_view.name = c.name;
+                    if (c.time != null)
+                    {
+                        course_view.times = "查看教学日历";
+                        course_view.timeu = c.time.url;
+                    }
+                    else
+                    {
+                        course_view.times = "暂无教学日历";
+                        course_view.timeu = "";
+                    }
+                    if (c.program != null)
+                    {
+                        course_view.programs = "查看课程大纲";
+                        course_view.programu = c.program.url;
+                    }
+                    else
+                    {
+                        course_view.programs = "暂无课程大纲";
+                        course_view.programu = "";
+                    }
+                    if (c.experiment != null)
+                    {
+                        course_view.experiments = "查看实验大纲";
+                        course_view.experimentu = c.experiment.url;
+                    }
+                    else
+                    {
+                        course_view.experiments = "暂无实验大纲";
+                        course_view.experimentu = "";
+                    }
+                    cList.Add(course_view);
+                }
+                return ResultToJson.toJson(cList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
 
-        //}
+        }
 
         [Route("addCourse")]
         [HttpPost]
         public object PostAddCourse([FromBody]Course_View cl)
         {
             String a = "";
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
+            String username = cookie["username"].ToString();
             Course course = new Course();
             course.id = BmobInput.Parse<BmobInt>(cl.id);
             course.name = cl.name;
-            course.program = cl.program;
-            course.experiment = cl.experiment;
-            course.time = cl.time;
+            course.tId = username;
+            //course.program = cl.program;
+            //course.experiment = cl.experiment;
+            //course.time = cl.time;
             var future = Bmob.CreateTaskAsync("Course", course);
             try
             {
@@ -143,7 +149,7 @@ namespace TrainApp.WebApi
             return a;
         }
 
-        [Route("uploadfile")]
+        [Route("uploadFile")]
         [HttpPost]
         public object PostFile([FromBody]Course_View cl)
         {
