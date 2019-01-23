@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body ng-controller="examinationCtrl">
+    <div class="container-fluid">
+        <div id="loadData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
+        <div class="row text-center" style="margin-top:20px">
+            <h2>查询习题</h2>
+        </div>
+        <div class="row" style="margin-top:20px;background:#b5d5ff">
+            <h4 style="margin-left:20px">查询条件</h4>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <select ng-model="courseId" class="form-control" ng-options="course.id as course.name for course in courseInfo">
+                            <option value="">-----请选择所属课程-----</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-1">
+                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryExamination(courseId)">查询</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="row" style="margin-top:10px;background:#b5d5ff">
+            <h4 style="margin-left:20px">试卷信息</h4>
+        </div>
+        <div class="row text-right" style="margin-top:10px;margin-right:50px">
+            <button class="btn btn-danger" ng-click="deleteExamination()">删除</button>
+        </div>
+        <div class="row" style="margin-top:10px; height:500px; overflow-x:auto;">
+            <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
+                <thead>
+                    <tr class="text-center" style="background:#b5d5ff">
+                        <td width="45px"><input type="checkbox" ng-model="$parent.allChecked" ng-change="chooseAll()" /></td>
+                        <td width="45px">序号</td>
+                        <td width="45px">试卷编号</td>
+                        <td width="200px">试卷名称</td>
+                        <td width="100px">试卷难度</td>
+                        <td width="100px">查看试卷</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="examination in examinationInfo" class="text-center">
+                        <td><input type="checkbox" ng-model="examination.checked" ng-click="chooseExamination($index)" /></td>
+                        <td>{{$index + 1}}</td>
+                        <td>{{examination.id}}</td>&nbsp;
+                        <td>{{examination.name}}</td>
+                        <td>{{examination.difficulty}} </td>
+                        <td><button class="btn btn-primary" ng-click="examinatinDetails($index)">查看</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -87,14 +87,14 @@ namespace TrainApp.WebApi
         List<Question_View> quesList = new List<Question_View>();
         [Route("GetQuestion")]
         [HttpPost]
-       
-            public object Post([FromBody]List<Question_View> question)
+
+        public object Post([FromBody]List<Question_View> question)
         {
 
             quesList.AddRange(question);
             return ResultToJson.toJson(question);
         }
-        
+
 
 
         [Route("AddQuestion")]
@@ -121,12 +121,12 @@ namespace TrainApp.WebApi
             String id = future.Result.objectId;
             return id;
         }
-            
+
 
 
         [Route("DeleteQuestion")]
         [HttpGet]
-        public object GetDeleteQuestion(int id,int courseId)
+        public object GetDeleteQuestion(int id, int courseId)
         {
             //两个条件的查询
             var query1 = new BmobQuery();
@@ -235,12 +235,12 @@ namespace TrainApp.WebApi
         }
         [Route("QueryUnitQuestion")]
         [HttpGet]
-        public object GetQueryUnitQuestion(int courseId,int unitId)
+        public object GetQueryUnitQuestion(int courseId, int unitId)
         {
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("courseId", courseId);
-            var query1 = new BmobQuery();  
+            var query1 = new BmobQuery();
             query1.WhereEqualTo("unitId", unitId);
             query = query.And(query1);
             var future = Bmob.FindTaskAsync<Question>("Question", query);
@@ -277,7 +277,7 @@ namespace TrainApp.WebApi
 
         [Route("UpdateQuestion")]
         [HttpPost]
-        public object PostUpdateQuestion([FromBody]List<Question_View> questionsInfo) 
+        public object PostUpdateQuestion([FromBody]List<Question_View> questionsInfo)
         {
             String result = "";
             int count = 0;
@@ -350,8 +350,8 @@ namespace TrainApp.WebApi
                     question_view.question = q.question;
                     question_view.totalNum = q.totalNum.Get();
                     question_view.rightNum = q.rightNum.Get();
-      
-                    if(question_view.totalNum != 0)
+
+                    if (question_view.totalNum != 0)
                     {
                         question_view.accuracy = 100 * question_view.rightNum / question_view.totalNum;
                     }
@@ -367,7 +367,8 @@ namespace TrainApp.WebApi
                 return "获取失败";
             }
         }
+       
 
 
-    }
+    }//结束括号
 }

@@ -99,6 +99,10 @@
     <Content Include="View\ClassView\studentInfo.html" />
     <Content Include="View\CourseView\courseHomePage.html" />
     <Content Include="View\CourseView\courseInfo.html" />
+    <Content Include="View\ExaminationView\compositionPaper.html" />
+    <Content Include="View\ExaminationView\examinationDetail.html" />
+    <Content Include="View\ExaminationView\examinationHomePage.html" />
+    <Content Include="View\ExaminationView\examinationInfo.html" />
     <Content Include="View\footer.html" />
     <Content Include="View\header.html" />
     <Content Include="View\homePage.html" />

@@ -104,6 +104,7 @@
     <Compile Include="BmobInit\BmobBaseForm.cs" />
     <Compile Include="BmobModel\Class.cs" />
     <Compile Include="BmobModel\Course.cs" />
+    <Compile Include="BmobModel\Examination.cs" />
     <Compile Include="BmobModel\Feedback.cs" />
     <Compile Include="BmobModel\Knowledge.cs" />
     <Compile Include="BmobModel\Question.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="BmobModel\User.cs" />
     <Compile Include="Controller\ClassController.cs" />
     <Compile Include="Controller\CourseController.cs" />
+    <Compile Include="Controller\ExaminationController.cs" />
     <Compile Include="Controller\FeedbackController.cs" />
     <Compile Include="Controller\KnowledgeController.cs" />
     <Compile Include="Controller\QuestionController.cs" />
@@ -125,6 +127,7 @@
     <Compile Include="JsonUtil\ResultToJson.cs" />
     <Compile Include="Startup\WebApiConfig.cs" />
     <Compile Include="ViewModel\Course_View.cs" />
+    <Compile Include="ViewModel\Examination_View.cs" />
     <Compile Include="ViewModel\Feedback_View.cs" />
     <Compile Include="ViewModel\Knowledge_View.cs" />
     <Compile Include="ViewModel\Question_View.cs" />

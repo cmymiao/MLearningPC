@@ -54,16 +54,7 @@ namespace TrainApp.WebApi
 
             }
         }
-        List<Feedback_View> feedList = new List<Feedback_View>();
-        [Route("GetFeedback")]
-        [HttpPost]
 
-        public object Post([FromBody]List<Feedback_View> feedback)
-        {
-
-            feedList.AddRange(feedback);
-            return ResultToJson.toJson(feedback);
-        }
 
         //学生答题情况统计
         [Route("QueryFeedback")]

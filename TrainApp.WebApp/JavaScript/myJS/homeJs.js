@@ -2234,3 +2234,173 @@ app.controller('studentNumStatisticCtrl', function ($scope, $http) {
 
 
 })
+
+app.controller('examinationCtrl', function ($scope, $http) {
+    //下拉框
+    $scope.showCourse = function () {
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowCourse'
+        }).then(function successCallback(response) {
+            $scope.courseInfo = response.data;
+        }, function errorCallback(response) {
+        });
+    }
+    $scope.showCourse();
+    //查询试卷信息
+    $scope.queryExamination = function (courseId) {
+        if (courseId != "") {
+            $scope.coursesId = courseId;
+            $http({
+                method: 'GET',
+                url: 'http://localhost:5451/TrainApp/QueryExamination',
+                params: {
+                    'courseId': courseId
+                }
+            }).then(function successCallback(response) {
+                $scope.examinationInfo = response.data;
+                alert("查询成功");
+            }, function errorCallback(response) {
+                alert("查询失败");
+            });
+        }
+        else { alert("请选择课程名称"); }
+    }
+    $scope.allChecked = false;
+
+    $scope.chooseAll = function () {
+        $scope.allChecked = event.target.checked;
+        for (i in $scope.examinationInfo) {
+            $scope.examinationInfo[i].checked = event.target.checked;
+        }
+    };
+    //刷新
+    $scope.queryExaminations = function (courseId) {
+        if (courseId != "") {
+            $scope.coursesId = courseId;
+            $http({
+                method: 'GET',
+                url: 'http://localhost:5451/TrainApp/QueryExamination',
+                params: {
+                    'courseId': courseId
+                }
+            }).then(function successCallback(response) {
+                $scope.examinationInfo = response.data;
+            }, function errorCallback(response) {
+                alert("查询失败");
+            });
+        }
+        else { alert("请选择课程名称"); }
+    }
+    $scope.chooseExamination = function (index) {
+        for (i in $scope.examinationInfo) {
+            if (!$scope.examinationInfo[i].checked) {
+                $scope.allChecked = false;
+                return;
+            }
+        }
+        $scope.allChecked = true;
+    }
+
+    var count = 0;
+    var a = 0;
+    $scope.deleteExamination = function () {
+        if ($scope.allChecked == true) {
+            if (confirm("删除所有试卷？")) {
+                for (i in $scope.examinationInfo) {
+                    a++;
+                    $scope.delete($scope.examinationInfo[i].id);
+                }
+            }
+        } else {
+            if (confirm("确认删除所选试卷？")) {
+                for (i in $scope.examinationInfo) {
+                    if ($scope.examinationInfo[i].checked) {
+                        a++;
+                        $scope.delete($scope.examinationInfo[i].id);
+                    }
+                }
+            }
+        }
+    }
+
+
+    $scope.delete = function (id) {
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/DeleteExamination',
+            params: {
+                'id': id
+            }
+        }).then(function successCallback(response) {
+            count++;
+            if (count == a) {
+                $scope.queryExaminations($scope.coursesId);
+                alert("删除成功");
+            }
+        }, function errorCallback(response) {
+            alert("试卷编号为" + id + "的试卷删除失败");
+            count++;
+            if (count == a) {
+                $scope.queryExaminations($scope.coursesId);
+            }
+        });
+    }
+
+    //查看试卷详情 
+    $scope.examinatinDetails = function ($index) {
+        if ($index >= 0) {
+            var id = $scope.examinationInfo[$index].id;
+            $scope.examId = id;
+            $http({
+                method: 'GET',
+                url: 'http://localhost:5451/TrainApp/ExaminationDetails',
+                params: {
+                    'id': id
+                }
+            }).then(function successCallback(response) {
+                $scope.examinationsInfo = response.data;
+                $scope.examName = $scope.examinationsInfo[0].name;
+                //$scope.examQuestionList = $scope.examinationsInfo[0].questionList;
+                $scope.examQuestions = $scope.examinationsInfo[0].examQuestion;
+                localStorage.clear();
+                localStorage.setItem("examName", $scope.examName);
+                localStorage.setItem("examId", $scope.examId);
+                //localStorage.setItem("examQuestionList", $scope.examQuestionList);
+                localStorage.setItem("examQuestions", $scope.examQuestions);
+                window.location = "ExaminationView/examinationDetail.html";
+               
+            }, function errorCallback(response) {
+
+                alert("失败");
+            });
+        }
+     
+    }
+    $scope.examName = localStorage.getItem("examName");
+    $scope.examId = localStorage.getItem("examId");
+    //$scope.examQuestionList = localStorage.getItem("examQuestionList");
+    $scope.examQuestions = localStorage.getItem("examQuestions");
+
+    $scope.showDetails = function (examQuestions) {
+        if (examQuestions != 0) {
+            $http({
+                method: 'GET',
+                url: 'http://localhost:5451/TrainApp/ShowDetails',
+                params: {
+                    'examQuestions': examQuestions
+                }
+            }).then(function successCallback(response) {
+                $scope.examQuestionsInfo = response.data;
+
+            }, function errorCallback(response) {
+
+                alert("失败");
+            });
+        }
+
+    }
+    $scope.showDetails($scope.examQuestions);
+
+
+})
