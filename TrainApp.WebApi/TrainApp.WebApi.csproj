@@ -107,6 +107,7 @@
     <Compile Include="BmobModel\Feedback.cs" />
     <Compile Include="BmobModel\Knowledge.cs" />
     <Compile Include="BmobModel\Question.cs" />
+    <Compile Include="BmobModel\Resource.cs" />
     <Compile Include="BmobModel\Unit.cs" />
     <Compile Include="BmobModel\User.cs" />
     <Compile Include="Controller\ClassController.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Controller\FeedbackController.cs" />
     <Compile Include="Controller\KnowledgeController.cs" />
     <Compile Include="Controller\QuestionController.cs" />
+    <Compile Include="Controller\ResourceController.cs" />
     <Compile Include="Controller\UnitController.cs" />
     <Compile Include="Controller\UserController.cs" />
     <Compile Include="Global.asax.cs">
@@ -126,6 +128,7 @@
     <Compile Include="ViewModel\Feedback_View.cs" />
     <Compile Include="ViewModel\Knowledge_View.cs" />
     <Compile Include="ViewModel\Question_View.cs" />
+    <Compile Include="ViewModel\Resource_View.cs" />
     <Compile Include="ViewModel\Unit_View.cs" />
     <Compile Include="ViewModel\User_View.cs" />
   </ItemGroup>

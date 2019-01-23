@@ -106,6 +106,8 @@
     <Content Include="View\QuestionView\queryQuestion.html" />
     <Content Include="View\QuestionView\questionHomePage.html" />
     <Content Include="View\QuestionView\questionInfo.html" />
+    <Content Include="View\ResourceView\resourceHomePage.html" />
+    <Content Include="View\ResourceView\resourceInfo.html" />
     <Content Include="View\StatisticView\questionStatistic.html" />
     <Content Include="View\StatisticView\statisticHomePage.html" />
     <Content Include="View\StatisticView\studentNumStatistic.html" />
@@ -117,9 +119,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="View\ResourceView\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>

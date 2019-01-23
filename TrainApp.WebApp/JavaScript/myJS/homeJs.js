@@ -1031,6 +1031,291 @@ app.controller('addKnowledgeCtrl', function ($scope, $http, $modalInstance, data
     }
 })
 
+app.controller('resourceCtrl', function ($scope, $http, $modal) {
+
+    $scope.changeCourse = function (course) {
+        $scope.knowledges = [];
+        $scope.units = [""];
+        $scope.showAllUnit(course.id);
+        $scope.showAllKnowledge(course.id);
+        $scope.currentCourse = course;
+        $scope.currentUnitId = 0;
+        $scope.currentKnowledgeId = 0;
+        $scope.courseName = course.name;
+        $scope.resources = null;
+    }
+
+    $scope.showAllCourse = function () {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowCourse',
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.courses = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+    $scope.showAllCourse();
+
+    $scope.showAllUnit = function (id) {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/QueryUnit',
+            params: {
+                'courseId': id
+            }
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.units = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+
+    $scope.showAllKnowledge = function (id) {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowAllKnowledge',
+            params: {
+                'courseId': id
+            }
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.knowledgeList = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+
+    $scope.selectKnowledge = function(unitId){
+        $scope.knowledges = [];
+        for (var i = 0; i < $scope.knowledgeList.length; i++) {
+            if ($scope.knowledgeList[i].unitId === unitId) {
+                $scope.knowledges.push($scope.knowledgeList[i]);
+            }
+        }
+    }
+
+    $scope.findResource = function (unitId, knowledgeId) {
+        if (unitId == undefined || unitId == null) {
+            unitId = 0;
+        }
+        if (knowledgeId == undefined || knowledgeId == null) {
+            knowledgeId = 0;
+        }
+        $scope.currentUnitId = unitId;
+        $scope.currentKnowledgeId = knowledgeId;
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowResource',
+            params: {
+                'courseId': $scope.currentCourse.id,
+                'unitId': unitId,
+                'knowledgeId':knowledgeId
+            }
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.resources = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+
+    $scope.showFileContent = function (url) {
+        window.open(url, "_blank");
+    }
+
+    $scope.allChecked = false;
+
+    $scope.chooseAll = function () {
+        $scope.allChecked = event.target.checked;
+        for (i in $scope.resources) {
+            $scope.resources[i].checked = event.target.checked;
+        }
+    };
+
+    $scope.chooseResource = function (index) {
+        for (i in $scope.resources) {
+            if (!$scope.resources[i].checked) {
+                $scope.allChecked = false;
+                return;
+            }
+        }
+        $scope.allChecked = true;
+    }
+
+    var count = 0;
+    var a = 0;
+
+    $scope.deleteResource = function () {
+        if ($scope.allChecked == true) {
+            if (confirm("确认删除该课程的所有课程资源？")) {
+                for (i in $scope.resources) {
+                    a++;
+                    $scope.delete($scope.resources[i].id);
+                }
+            }
+        } else {
+            for (i in $scope.resources) {
+                if ($scope.resources[i].checked) {
+                    a++;
+                }
+            }
+            if (a == 0) {
+                alert("请先选择想要删除的课程资源。");
+                return;
+            }
+            if (confirm("确认删除所选课程资源？")) {
+                a = 0;
+                for (i in $scope.resources) {
+                    if ($scope.resources[i].checked) {
+                        a++;
+                        $scope.delete($scope.resources[i].id);
+                    }
+                }
+            }
+        }
+    }
+
+    $scope.delete = function (id) {
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/DeleteResource',
+            params: {
+                'id': id
+            }
+        }).then(function successCallback(response) {
+            count++;
+            if (count == a) {
+                $scope.findResource($scope.currentUnitId, $scope.currentKnowledgeId);
+                alert("删除成功");
+            }
+        }, function errorCallback(response) {
+            alert("课程资源id为" + id + "的资源删除失败");
+            count++;
+            if (count == a) {
+                $scope.findResource($scope.currentUnitId, $scope.currentKnowledgeId);
+            }
+        });
+    }
+
+    $scope.openUpload = function (unitId, knowledgeId) {
+        if (unitId == undefined || unitId == null) {
+            alert("请选择想要上传的课程资源所属的课程单元");
+            return;
+        }
+        if (knowledgeId == undefined || knowledgeId == null) {
+            alert("请选择想要上传的课程资源所属的知识点");
+            return;
+        }
+        var data = [];
+        data.push($scope.currentCourse);
+        data.push(unitId);
+        data.push(knowledgeId);
+        var modalInstance = $modal.open({
+            templateUrl: 'uploadResource.html',//script标签中定义的id
+            controller: 'uploadResourceCtrl',//modal对应的Controller
+            resolve: {
+                data: function () {//data作为modal的controller传入的参数
+                    return data;//用于传递数据
+                }
+            }
+        })
+        modalInstance.result.then(function (result) {
+            if (result == "success") {
+                alert("文件上传成功");
+                $scope.findResource(unitId, knowledgeId);
+            }
+        })
+    }
+
+})
+
+app.controller('uploadResourceCtrl', function ($scope, $http, $modalInstance, data) {
+    app.directive('file', function () {
+        return {
+            scope: {
+                file: '='
+            },
+            link: function (scope, el, attrs) {
+                el.bind('change', function (event) {
+                    var file = event.target.files;
+                    scope.file = file ? file : undefined;
+                    scope.$apply();
+                });
+            }
+        };
+    })
+
+    $scope.fileChanged = function (ele) {
+        $scope.files = ele.files;
+        $scope.$apply();
+    }
+
+    $scope.course = data[0].name;
+    $scope.unit = data[1];
+    $scope.knowledge = data[2];
+
+    $scope.closeDialog = function () {
+        $modalInstance.dismiss('cancel');
+    }
+
+    $scope.submitFile = function () {
+        if ($scope.id == null) {
+            alert("请填写资源文件编号");
+            return;
+        }
+        if ($scope.type == null) {
+            alert("请填写资源文件类型");
+            return;
+        }
+        if ($scope.files == undefined) {
+            alert("请选择要上传的资源文件");
+            return;
+        }
+        $('#myModal').modal('show');
+        const pic = $scope.files
+        let file
+        for(let item of pic) {
+            file = Bmob.File(item.name, item);
+        }
+        file.save().then(res => {
+            console.log(res.length);
+            console.log(res);
+            // var id = $scope.course.id;
+            var fileContent = { "filename": res[0].filename, "url": res[0].url };
+            $http({
+                method: 'POST',
+                url: 'http://localhost:5451/TrainApp/uploadResource',
+                data: {
+                    "id": $scope.id,
+                    "file": fileContent,
+                    "type": $scope.type,
+                    "courseId": data[0].id,
+                    "unitId": data[1],
+                    "knowledgeId": data[2]
+                }
+            }).then(function successCallback(response) {
+                $('#myModal').modal('hide');
+                $scope.i = response.data;
+                $modalInstance.close("success");
+
+            }, function errorCallback(response) {
+                $('#myModal').modal('hide');
+                alert("文件上传失败");
+            });
+        })
+    }
+})
+
 app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
 
     $scope.showAllQuestion = function () {
