@@ -131,6 +131,7 @@
     <Compile Include="ViewModel\Feedback_View.cs" />
     <Compile Include="ViewModel\Knowledge_View.cs" />
     <Compile Include="ViewModel\Question_View.cs" />
+    <Compile Include="ViewModel\Requirement.cs" />
     <Compile Include="ViewModel\Resource_View.cs" />
     <Compile Include="ViewModel\Unit_View.cs" />
     <Compile Include="ViewModel\User_View.cs" />

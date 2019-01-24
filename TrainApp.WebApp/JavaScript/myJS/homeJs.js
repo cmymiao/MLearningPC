@@ -2400,7 +2400,7 @@ app.controller('examinationCtrl', function ($scope, $http) {
         }
 
     }
-    $scope.showDetails($scope.examQuestions);
+    //$scope.showDetails($scope.examQuestions);
 
 
 })

@@ -104,6 +104,57 @@ namespace TrainApp.WebApi
             return ResultToJson.toJson(eList);      //返回数据需要json格式
         }
 
+        [Route("RandomPaper")]
+        [HttpPost]
+        public object PostRandomPaper([FromBody]Requirement requirement)
+        {
+            //String result = "";
+            List<Question> questionList = new List<Question>();
+            List<Question_View> qList = new List<Question_View>();
+            var query = new BmobQuery();
+            query.WhereEqualTo("courseId", requirement.courseId);
+            query.Limit(500);
+            var future = Bmob.FindTaskAsync<Question>("Question", query);
+            try
+            {
+                questionList = future.Result.results;
+                foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Question_View question_view = new Question_View();
+                    question_view.id = q.id.Get();
+                    question_view.difficulty = q.difficulty.Get();
+                    question_view.unitId = q.unitId.Get();
+                    question_view.knowledgeId = q.knowledgeId;
+                    qList.Add(question_view);
+                }
+                randomPaper(qList, requirement);
+            }
+            catch
+            {
+                //result = "组卷失败";
+            }
+            return "";
+        }
+
+        //随机组卷
+        public object randomPaper(List<Question_View> questionList, Requirement require)
+        {
+            //数据初始化
+            int n = 5;
+            Double paperDifficulty = Convert.ToDouble(require.difficulty);//试卷难度系数
+            String[] weight = require.unitWeight.Split(new[] { ';' });
+            Double[] unitWeight = new Double[weight.Length];
+            for(int i = 0; i < weight.Length; i++)
+            {
+                unitWeight[i] = Convert.ToDouble(weight[i]);
+            }
+            //计算每个难度级别的题目个数
+            Double p = paperDifficulty / (Double)(n + 2); //平均期望
+
+
+            return "";
+        }
+
        
     }
 }
