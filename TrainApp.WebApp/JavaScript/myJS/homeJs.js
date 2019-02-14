@@ -2402,5 +2402,23 @@ app.controller('examinationCtrl', function ($scope, $http) {
     }
     //$scope.showDetails($scope.examQuestions);
 
+    $scope.begin = function () {
+        $http({
+            method: 'POST',
+            url: 'http://localhost:5451/TrainApp/RandomPaper',
+            data: {
+                "courseId": 10001,
+                "totalNum": 20,
+                "difficulty": 1.8,
+                "unitWeight":"0.5;0.5"
+            }
+        }).then(function successCallback(response) {
+            $scope.result = response.data;
+            console.log($scope.result);
+        }, function errorCallback(response) {
+
+            alert("失败");
+        });
+    }
 
 })

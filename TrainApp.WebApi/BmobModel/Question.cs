@@ -9,7 +9,7 @@ namespace TrainApp.WebApi.BmobModel
     public class Question:BmobTable         //定义实体类，与数据库表中的字段对应，需继承BmobTable
     {
         public BmobInt id { get; set; }
-        public BmobInt difficulty { get; set; }
+        public BmobDouble difficulty { get; set; }
         public BmobInt totalNum { get; set; }
         public BmobInt rightNum { get; set; }
         public String question { get; set; }
@@ -30,7 +30,7 @@ namespace TrainApp.WebApi.BmobModel
         {
             base.readFields(input);
             this.id = input.getInt("id");
-            this.difficulty = input.getInt("difficulty");
+            this.difficulty = input.getDouble("difficulty");
             this.totalNum = input.getInt("totalNum");
             this.rightNum = input.getInt("rightNum");
             this.question = input.getString("question");
