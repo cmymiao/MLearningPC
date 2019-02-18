@@ -35,50 +35,50 @@
         <div class="row" style="background:#b5d5ff">
             <h4 style="margin-left:20px">统计结果</h4>
         </div>
-        <div class="row">           
-            <div class="col-xs-6" style="height:500px; overflow-x:auto; text-align:center;">
-                <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
-                    <caption class="caption" style ="font-size:20px; text-align:center;">正确率最高的15道题</caption>
-                    <thead style="overflow-x:auto;">
-                        <tr class="text-center" style="background:#b5d5ff">
-                            <td width="45px">序号</td>
-                            <td width="45px">编号</td>
-                            <td width="200px">题目内容</td>
-                            <td width="160px">正确率</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="question in highQuestionInfo" class="text-center">
-                            <td>{{$index + 1}}</td>
-                            <td>{{question.id}}</td>&nbsp;
-                            <td>{{question.question}}</td>
-                            <td>{{question.accuracy + "%"}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-xs-6" style="height:500px; overflow-x:auto; ">
-                <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
-                    <caption  class="caption" style ="font-size:20px; text-align:center">正确率最低的15道题</caption>
-                    <thead>
-                        <tr class="text-center" style="background:#b5d5ff">
-                            <td width="45px">序号</td>
-                            <td width="45px">编号</td>
-                            <td width="200px">题目内容</td>
-                            <td width="160px">正确率</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="question in lowQuestionInfo" class="text-center">
-                            <td>{{$index + 1}}</td>
-                            <td>{{question.id}}</td>&nbsp;
-                            <td>{{question.question}}</td>
-                            <td>{{question.accuracy + "%"}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="row">
+        <div class="col-xs-6" style="height:500px; overflow-x:auto; text-align:center;">
+            <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
+                <caption class="caption" style ="font-size:20px; text-align:center;">正确率最高的15道题</caption>
+                <thead style="overflow-x:auto;">
+                    <tr class="text-center" style="background:#b5d5ff">
+                        <td width="45px">序号</td>
+                        <td width="45px">编号</td>
+                        <td width="200px">题目内容</td>
+                        <td width="160px">正确率</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="question in highQuestionInfo" class="text-center">
+                        <td>{{$index + 1}}</td>
+                        <td>{{question.id}}</td>&nbsp;
+                        <td>{{question.question}}</td>
+                        <td>{{question.accuracy + "%"}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+                <div class="col-xs-6" style="height:500px; overflow-x:auto; ">
+                    <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
+                        <caption class="caption" style="font-size:20px; text-align:center">正确率最低的15道题</caption>
+                        <thead>
+                            <tr class="text-center" style="background:#b5d5ff">
+                                <td width="45px">序号</td>
+                                <td width="45px">编号</td>
+                                <td width="200px">题目内容</td>
+                                <td width="160px">正确率</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="question in lowQuestionInfo" class="text-center">
+                                <td>{{$index + 1}}</td>
+                                <td>{{question.id}}</td>&nbsp;
+                                <td>{{question.question}}</td>
+                                <td>{{question.accuracy + "%"}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
     </div>
 </body>
 </html>

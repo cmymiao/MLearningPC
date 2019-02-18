@@ -24,6 +24,8 @@ namespace TrainApp.WebApi.ViewModel
         public String knowledgeId { get; set; }
         public String analysis { get; set; }
         public int accuracy { get; set; }
+        public String examQuestionList { get; set; }
+        public int[] examQuestion { get; set; }
 
 
     }

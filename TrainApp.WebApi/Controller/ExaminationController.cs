@@ -89,11 +89,11 @@ namespace TrainApp.WebApi
                     examination_View.id = e.id.Get();
                     examination_View.difficulty = e.difficulty.Get();
                     examination_View.courseId = e.courseId.Get();
-                    if(examination_View.questionList != "")
-                    {
-                        string[] results = examination_View.questionList.Split(new[] { ';' });
-                        examination_View.examQuestion = Array.ConvertAll<string, int>(results, s => int.Parse(s));
-                    }
+                    //if(examination_View.questionList != "")
+                    //{
+                    //    string[] results = examination_View.questionList.Split(new[] { ';' });
+                    //    examination_View.examQuestion = Array.ConvertAll<string, int>(results, s => int.Parse(s));
+                    //}
                     eList.Add(examination_View);
                 }
             }
@@ -104,6 +104,42 @@ namespace TrainApp.WebApi
             return ResultToJson.toJson(eList);      //返回数据需要json格式
         }
 
-       
+        [Route("UpdateExam")]
+        [HttpGet]
+        public object GetUpdateExam(int id,int questionId, int currentQuestionId)
+        {
+            String result = "";
+            String questionIds = questionId.ToString();
+            String currentQuestionIds = currentQuestionId.ToString();
+            var query = new BmobQuery();
+            query.WhereEqualTo("id", id);
+            var future = Bmob.FindTaskAsync<Examination>("Examination", query);
+            try
+            {
+                String objectId = future.Result.results[0].objectId;
+                String questionList = future.Result.results[0].questionList;
+                examination.questionList = questionList.Replace(currentQuestionIds,questionIds);
+                var future1 = Bmob.UpdateTaskAsync("Examination", objectId, examination);
+                try
+                {
+                    String a = future1.Result.updatedAt;
+                    result = examination.questionList;
+
+                }
+                catch
+                {
+                    result = "fail";
+                }
+                
+            }
+            catch
+            {
+
+            }
+            return result;
+        }
+      
+
+
     }
 }

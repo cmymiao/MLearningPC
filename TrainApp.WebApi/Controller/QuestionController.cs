@@ -17,6 +17,7 @@ namespace TrainApp.WebApi
         public Question question = new Question();
         public List<Question> questionList = new List<Question>();
         public List<Question_View> qList = new List<Question_View>();
+
         public List<Question_View> questionSortList = new List<Question_View>();
 
 
@@ -367,8 +368,96 @@ namespace TrainApp.WebApi
                 return "获取失败";
             }
         }
-       
 
+        //查看试卷详情
+        [Route("ShowDetails")]
+        [HttpGet]
+        public object GetShowDetails(String examQuestionList,int examCourseId)
+        {
+            string[] results = examQuestionList.Split(new[] { ';' });
+            int[] examQuestion = Array.ConvertAll<string, int>(results, s => int.Parse(s));
+
+            for (int i = 0; i < examQuestion.Length; i++)
+            {
+                var query = new BmobQuery();
+                query.WhereEqualTo("id", examQuestion[i]);
+                var query2 = new BmobQuery();
+                query2.WhereEqualTo("courseId", examCourseId);
+                query = query.And(query2);
+                query.OrderBy("id");
+                var future = Bmob.FindTaskAsync<Question>("Question", query);
+                try
+                {
+                    questionList = future.Result.results;
+                    foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                    {
+                        Question_View question_view = new Question_View();
+                        question_view.id = q.id.Get();
+                        question_view.difficulty = q.difficulty.Get();
+                        question_view.question = q.question;
+                        question_view.courseId = q.courseId.Get();
+                        question_view.unitId = q.unitId.Get();
+                        question_view.knowledgeId = q.knowledgeId;
+                        qList.Add(question_view);
+                    }
+                }
+                catch
+                {
+                    return "获取失败";
+                }
+            }
+            return ResultToJson.toJson(qList);
+        }
+
+        //试卷题目修改
+
+        [Route("SelectedQuestion")]
+        [HttpGet]
+        public object GetSelectedQuestion(int courseId, int unitId,String knowledgeId,int difficulty)
+        {
+            var query = new BmobQuery();
+            query.Limit(300);
+            query.WhereEqualTo("courseId", courseId);
+            var query1 = new BmobQuery();
+            query1.WhereEqualTo("unitId", unitId);
+            var query2 = new BmobQuery();
+            query2.WhereEqualTo("knowledgeId", knowledgeId);
+            var query3 = new BmobQuery();
+            query3.WhereEqualTo("difficulty", difficulty);
+            query2 = query2.And(query3);
+            query1 = query1.And(query2);
+            query = query.And(query1);
+            var future = Bmob.FindTaskAsync<Question>("Question", query);
+            try
+            {
+                questionList = future.Result.results;
+                foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Question_View question_view = new Question_View();
+                    question_view.id = q.id.Get();
+                    question_view.difficulty = q.difficulty.Get();
+                    question_view.totalNum = q.totalNum.Get();
+                    question_view.rightNum = q.rightNum.Get();
+                    question_view.question = q.question;
+                    question_view.a = q.a;
+                    question_view.b = q.b;
+                    question_view.c = q.c;
+                    question_view.d = q.d;
+                    question_view.answer = q.answer;
+                    question_view.analysis = q.analysis;
+                    question_view.courseId = q.courseId.Get();
+                    question_view.unitId = q.unitId.Get();
+                    question_view.knowledgeId = q.knowledgeId;
+                    qList.Add(question_view);
+
+                }
+                return ResultToJson.toJson(qList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
+        }
 
     }//结束括号
 }

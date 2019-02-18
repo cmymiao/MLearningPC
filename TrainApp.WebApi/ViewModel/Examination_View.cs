@@ -13,6 +13,6 @@ namespace TrainApp.WebApi.ViewModel
         public int id { get; set; }
         public double difficulty { get; set; }
         public int courseId { get; set; }
-        public int[] examQuestion { get; set;}
+        //public int[] examQuestion { get; set;}
     }
 }
