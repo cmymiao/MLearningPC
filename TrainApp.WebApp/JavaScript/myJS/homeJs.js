@@ -85,15 +85,15 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
     var classesId = [];
 
     $scope.showAllClass = function () {
-        $('#loadData').modal('show');
+        $('#loadClassData').modal('show');
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/ShowClass',
         }).then(function successCallback(response) {
             $rootScope.classes = response.data;
-            $('#loadData').modal('hide');
+            $('#loadClassData').modal('hide');
         }, function errorCallback(response) {
-            $('#loadData').modal('hide');
+            $('#loadClassData').modal('hide');
             alert("获取数据失败");
         });
     }
@@ -146,7 +146,7 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
     var a = 0;
 
     $scope.deleteClass = function () {
-        $('#deleteData').modal('show');
+        $('#deleteClassData').modal('show');
         if ($scope.allChecked == true) {
             if (confirm("班级删除后，学生信息以及答题情况也将被全部清除。确认删除所有班级？")) {
                 for (i in $scope.classes) {
@@ -186,15 +186,19 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
-                $('#deleteData').modal('hide');
+                $('#deleteClassData').modal('hide');
                 $scope.showAllClass();
+                count = 0;
+                a = 0;
                 alert("删除成功");
             }
         }, function errorCallback(response) {
             alert("班号为" + id + "的班级删除失败");
             count++;
             if (count == a) {
-                $('#deleteData').modal('hide');
+                count = 0;
+                a = 0;
+                $('#deleteClassData').modal('hide');
                 $scope.showAllClass();
             }
         });
@@ -361,13 +365,13 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
     }
 
     $scope.addStudent = function () {
-        $('#uploadData').modal('show');
+        $('#uploadStudentData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/UploadStudent',
             data: JSON.stringify($scope.p)
         }).then(function successCallback(response) {
-            $('#uploadData').modal('hide');
+            $('#uploadStudentData').modal('hide');
             if (response.data == "上传成功") {
                 alert("数据上传成功");
                 $scope.showAllStudents();
@@ -375,7 +379,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
                 alert("部分数据上传失败，请重试");
             }
         }, function errorCallback(response) {
-            $('#uploadData').modal('hide');
+            $('#uploadStudentData').modal('hide');
             alert("数据上传失败，请重试");
         });
     }
@@ -385,7 +389,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
     });
 
     $scope.showAllStudents = function () {
-        $('#loadData').modal('show');
+        $('#loadStudentData').modal('show');
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/showAllStudent',
@@ -401,9 +405,9 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
             for (var i = 0; i < $scope.newPages; i++) {
                 $scope.pageList.push(i + 1);
             }
-            $('#loadData').modal('hide');
+            $('#loadStudentData').modal('hide');
         }, function errorCallback(response) {
-            $('#loadData').modal('hide');
+            $('#loadStudentData').modal('hide');
             alert("获取数据失败");
         });
         
@@ -415,7 +419,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
         if (classId == null) {
             $scope.showAllStudents();
         } else {
-            $('#loadData').modal('show');
+            $('#loadStudentData').modal('show');
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/showStudentById',
@@ -434,9 +438,9 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
                 for (var i = 0; i < $scope.newPages; i++) {
                     $scope.pageList.push(i + 1);
                 }
-                $('#loadData').modal('hide');
+                $('#loadStudentData').modal('hide');
             }, function errorCallback(response) {
-                $('#loadData').modal('hide');
+                $('#loadStudentData').modal('hide');
                 alert("获取数据失败");
             });
         }
@@ -519,7 +523,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
 
     $scope.deleteStudent = function () {
         
-        $('#deleteData').modal('show');
+        $('#deleteStudentData').modal('show');
         if ($scope.allChecked == true) {
             if (confirm("删除？")) {
                 for (i in $scope.items) {
@@ -559,7 +563,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
-                $('#deleteData').modal('hide');
+                $('#deleteStudentData').modal('hide');
                 $scope.showAllStudents();
                 a = 0;
                 count = 0;
@@ -569,7 +573,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
             alert("学号为" + id + "的学生删除失败");
             count++;
             if (count == a) {
-                $('#deleteData').modal('hide');
+                $('#deleteStudentData').modal('hide');
                 a = 0;
                 count = 0;
                 $scope.showAllStudents();
@@ -851,8 +855,6 @@ app.controller('courseCtrl', function ($scope, $http, $modal) {
 
 
 })
-
-
 
 app.controller('uploadFileCtrl', function ($scope, $http, $modalInstance, data) {
     app.directive('file', function () {
@@ -2428,7 +2430,11 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
         }
 
     }
-    $scope.showDetails($scope.examQuestionList, $scope.examCourseId);
+
+    if ($scope.examQuestionList != null && $scope.examCourseId != null) {
+        $scope.showDetails($scope.examQuestionList, $scope.examCourseId);
+    }
+    
 
     //修改题目模态框
     $scope.modifyQuestion = function ($index) {

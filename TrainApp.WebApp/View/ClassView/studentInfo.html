@@ -7,18 +7,17 @@
 </head>
 <body ng-controller="studentCtrl">
     <div class="container-fluid">
-        <div id="uploadData" class="modal fade" data-keyboard="false"
+        <div id="uploadStudentData" class="modal fade" data-keyboard="false"
              data-backdrop="static" data-role="dialog"
              aria-labelledby="myModalLabel" aria-hidden="true">
             <div id="loading" class="loading">上传中。。。</div>
         </div>
-        <div id="loadData" class="modal fade" data-keyboard="false"
+        <div id="loadStudentData" class="modal fade" data-keyboard="false"
              data-backdrop="static" data-role="dialog"
              aria-labelledby="myModalLabel" aria-hidden="true">
             <div id="loading" class="loading">加载中。。。</div>
         </div>
-        
-        <div id="deleteData" class="modal fade" data-keyboard="false"
+        <div id="deleteStudentData" class="modal fade" data-keyboard="false"
              data-backdrop="static" data-role="dialog"
              aria-labelledby="myModalLabel" aria-hidden="true">
             <div id="loading" class="loading">删除中。。。</div>
@@ -148,7 +147,7 @@
                         <label class="col-sm-2 control-label">选择班级</label>
                         <div class="col-sm-10">
                             <select ng-model="classId" class="form-control" ng-options="class.id as class.name for class in classes" ng-change="showStudentByClass(classId)">
-                                <option value="">--显示全部学生信息--</option>
+                                <option value="">--显示全部班级--</option>
                             </select>
                         </div>
                     </div>
