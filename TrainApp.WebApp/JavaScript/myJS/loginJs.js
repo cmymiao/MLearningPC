@@ -32,7 +32,7 @@ app.controller('myCtrl', function ($scope, $http, $modal) {
                 else {
                     document.getElementById("login").innerText = "登录";
                     $scope.judge = false;
-                    window.location = "View/homePage.html";
+                    window.location = "View/courseList.html";
                 }
             }, function errorCallback(response) {
             });

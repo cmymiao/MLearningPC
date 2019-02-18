@@ -22,8 +22,14 @@ namespace TrainApp.WebApi.Controller
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
             String username = cookie["username"].ToString();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.WhereEqualTo("tId", username);
+            var q1 = new BmobQuery();
+            q1.WhereEqualTo("courseId", courseId);
+            query.And(q1);
             var future = Bmob.FindTaskAsync<Class>("Class", query);
             try
             {
@@ -43,7 +49,11 @@ namespace TrainApp.WebApi.Controller
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
             String username = cookie["username"].ToString();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             classInfo.tId = username;
+            classInfo.courseId = courseId;
             var future = Bmob.CreateTaskAsync("Class", classInfo);
             String id = future.Result.objectId;
             return id;

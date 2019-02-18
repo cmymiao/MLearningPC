@@ -6,6 +6,47 @@
     <meta charset="utf-8" />
 </head>
 <body ng-controller="examinationCtrl">
-    <p>自动组卷</p>
+    <div class="container-fluid">
+        <div id="loadingPaper" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">组卷中。。。</div>
+        </div>
+        <div class="row text-center" style="margin-top:20px">
+            <h2>自动组卷</h2>
+        </div>
+        <div class="row" style="margin-top:20px;background:#b5d5ff">
+            <h4 style="margin-left:20px">组卷条件</h4>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">选择课程</label>
+                    <div class="col-sm-4">
+                        <select ng-model="courseId" class="form-control" ng-options="course.id as course.name for course in courseInfo">
+                            <option value="">-----请选择所属课程-----</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">试卷总题数</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" ng-model="totalNum" placeholder="试卷题目总数(必填项)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">试卷难度</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" ng-model="paperDiff" placeholder="试卷难度，难度范围为1.0-3.0">
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary" ng-click="begin(courseId, totalNum, paperDiff)">开始组卷</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

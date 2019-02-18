@@ -106,7 +106,7 @@
     <Content Include="View\footer.html" />
     <Content Include="View\header.html" />
     <Content Include="View\homePage.html" />
-    <Content Include="View\introduction.html" />
+    <Content Include="View\courseList.html" />
     <Content Include="View\QuestionView\queryQuestion.html" />
     <Content Include="View\QuestionView\questionHomePage.html" />
     <Content Include="View\QuestionView\questionInfo.html" />

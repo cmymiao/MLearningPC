@@ -7,6 +7,22 @@
 </head>
 <body ng-controller="studentCtrl">
     <div class="container-fluid">
+        <div id="uploadData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">上传中。。。</div>
+        </div>
+        <div id="loadData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
+        
+        <div id="deleteData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">删除中。。。</div>
+        </div>
         <div class="row text-center" style="margin-top:20px">
             <h2>学生信息</h2>
         </div>
@@ -94,6 +110,11 @@
 
     <script type="text/ng-template" id="addStudent.html">
         <div>
+            <div id="addData" class="modal fade" data-keyboard="false"
+                 data-backdrop="static" data-role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="loading" class="loading">添加中。。。</div>
+            </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="title">请填写学生信息</h4>
             </div>
@@ -123,11 +144,19 @@
                             <input type="text" class="form-control" ng-model="passwordAgain" placeholder="再次输入密码">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">选择班级</label>
+                        <div class="col-sm-10">
+                            <select ng-model="classId" class="form-control" ng-options="class.id as class.name for class in classes" ng-change="showStudentByClass(classId)">
+                                <option value="">--显示全部学生信息--</option>
+                            </select>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" ng-click="closeDialog()">取消</button>
-                <button type="button" class="btn btn-primary" ng-click="submitClassInfo()">确认</button>
+                <button type="button" class="btn btn-primary" ng-click="submitClassInfo(classId)">确认</button>
             </div>
         </div>
     </script>

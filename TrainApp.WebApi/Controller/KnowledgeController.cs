@@ -73,8 +73,11 @@ namespace TrainApp.WebApi
 
         [Route("ShowAllKnowledge")]
         [HttpGet]                       //定义访问方式（Post或Get方法）
-        public object GetKnowledge(int courseId)             //返回数据的函数，如果是Get方法则方法名为Get开头，若是Post则使用Post开头。
+        public object GetKnowledge()             //返回数据的函数，如果是Get方法则方法名为Get开头，若是Post则使用Post开头。
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.WhereEqualTo("courseId", courseId);
             query.OrderBy("id");

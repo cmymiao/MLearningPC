@@ -45,7 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bmob-Windows">
-      <HintPath>C:\Users\11059\Desktop\Bmob-Windows.dll</HintPath>
+      <HintPath>..\packages\Bmob-Windows.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -131,6 +131,7 @@
     <Compile Include="ViewModel\Feedback_View.cs" />
     <Compile Include="ViewModel\Knowledge_View.cs" />
     <Compile Include="ViewModel\Question_View.cs" />
+    <Compile Include="ViewModel\Requirement.cs" />
     <Compile Include="ViewModel\Resource_View.cs" />
     <Compile Include="ViewModel\Unit_View.cs" />
     <Compile Include="ViewModel\User_View.cs" />

@@ -9,7 +9,7 @@ namespace TrainApp.WebApi.ViewModel
     {
         public String objectId { get; set; }
         public int id { get; set; }
-        public int difficulty { get; set; }
+        public Double difficulty { get; set; }
         public int totalNum { get; set; }
         public int rightNum { get; set; }
         public String question { get; set; }
