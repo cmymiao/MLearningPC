@@ -77,6 +77,9 @@ namespace TrainApp.WebApi
         [HttpPost]
         public object PostAddStudent([FromBody]List<User> user1)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             String a = "";
             List<User> error = new List<User>();
             List<String> list = new List<String>();
@@ -89,7 +92,9 @@ namespace TrainApp.WebApi
                 user.password = userList[i].password;
                 user.name = userList[i].name;
                 user.identity = userList[i].identity;
+                user.classId = userList[i].classId;
                 user.firstTime = 0;
+                user.courseId = courseId;
 
                 var future = Bmob.SignupTaskAsync(user);
                 try
@@ -176,9 +181,13 @@ namespace TrainApp.WebApi
         [HttpPost]
         public object PostAddStudent([FromBody]User userInfo)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             String id = "";
             userInfo.identity = "student";
             userInfo.firstTime = 0;
+            userInfo.courseId = courseId;
             var future = Bmob.SignupTaskAsync(userInfo);
             try
             {

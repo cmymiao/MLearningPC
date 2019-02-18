@@ -1,8 +1,83 @@
 ﻿var app = angular.module("myApp", ['ui.bootstrap']);
 Bmob.initialize("f69acbf2dd96fbaefdf9fd9793e93f66", "9a956445ff932b7d3f59b81af28cbe2a")
 
-app.controller('myCtrl', function ($scope, $http) {
-    $scope.a = 0
+app.controller('myCtrl', function ($scope, $http, $modal) {
+    $scope.showAllCourse = function () {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowCourse',
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.courses = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+    $scope.showAllCourse();
+
+    $scope.chooseCourse = function (id) {
+        var courseId = id + "";
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/SaveCurrentCourse',
+            params: {
+                'id': courseId
+            }
+        }).then(function successCallback(response) {
+            window.location = "homePage.html";;
+        }, function errorCallback(response) {
+        });
+    }
+
+    $scope.openAddCourse = function () {
+        var data = [];
+        var modalInstance = $modal.open({
+            templateUrl: 'addCourse.html',//script标签中定义的id
+            controller: 'addCourseCtrl',//modal对应的Controller
+            resolve: {
+                data: function () {//data作为modal的controller传入的参数
+                    return data;//用于传递数据
+                }
+            }
+        })
+        modalInstance.result.then(function (result) {
+            if (result == "success") {
+                $scope.showAllCourse();
+            }
+        })
+    }
+})
+
+app.controller('addCourseCtrl', function ($scope, $http, $modalInstance, data) {
+
+    $scope.closeDialog = function () {
+        $modalInstance.dismiss('cancel');
+    }
+
+    $scope.submitNewCourse = function () {
+        $('#addData').modal('show');
+        $http({
+            method: 'POST',
+            url: 'http://localhost:5451/TrainApp/AddCourse',
+            data: {
+                "id": $scope.newId,
+                "name": $scope.newName,
+            }
+        }).then(function successCallback(response) {
+            $('#addData').modal('hide');
+            if (response.data == "fail") {
+                alert("信息添加失败,id冲突");
+            } else {
+                $modalInstance.close("success");
+                alert("信息添加成功");
+            }
+        }, function errorCallback(response) {
+            $('#addData').modal('hide');
+            alert("信息添加失败");
+        });
+    }
 })
 
 app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
@@ -10,12 +85,15 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
     var classesId = [];
 
     $scope.showAllClass = function () {
+        $('#loadData').modal('show');
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/ShowClass',
         }).then(function successCallback(response) {
             $rootScope.classes = response.data;
+            $('#loadData').modal('hide');
         }, function errorCallback(response) {
+            $('#loadData').modal('hide');
             alert("获取数据失败");
         });
     }
@@ -68,6 +146,7 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
     var a = 0;
 
     $scope.deleteClass = function () {
+        $('#deleteData').modal('show');
         if ($scope.allChecked == true) {
             if (confirm("班级删除后，学生信息以及答题情况也将被全部清除。确认删除所有班级？")) {
                 for (i in $scope.classes) {
@@ -107,6 +186,7 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
+                $('#deleteData').modal('hide');
                 $scope.showAllClass();
                 alert("删除成功");
             }
@@ -114,6 +194,7 @@ app.controller('classCtrl', function ($rootScope, $scope, $http, $modal) {
             alert("班号为" + id + "的班级删除失败");
             count++;
             if (count == a) {
+                $('#deleteData').modal('hide');
                 $scope.showAllClass();
             }
         });
@@ -158,20 +239,24 @@ app.controller('addClassCtrl', function ($scope, $http, $modalInstance, data) {
         var id = $scope.classId;
         var name = $scope.className;
         var schedule = $scope.classSchedule;
+        var term = $scope.classTerm;
         if (id == undefined) {
             alert("请输入班级号，该项为必填项！");
         } else if (name == undefined) {
             alert("请输入班级名称，该项为必填项！");
         } else {
+            $('#addData').modal('show');
             $http({
                 method: 'POST',
                 url: 'http://localhost:5451/TrainApp/AddClass',
-                data: { "id": id, "name": name, "schedule": schedule }
+                data: { "id": id, "name": name, "schedule": schedule, "term":term }
             }).then(function successCallback(response) {
                 $scope.result = response.data;
+                $('#addData').modal('hide');
                 $modalInstance.close("success");
                 alert("添加班级成功。");
             }, function errorCallback(response) {
+                $('#addData').modal('hide');
                 $modalInstance.close(response.data);
                 alert("添加班级失败。");
             });
@@ -201,14 +286,17 @@ app.controller('updateClassCtrl', function ($scope, $http, $modalInstance, data)
     }
 
     $scope.update = function () {
+        $('#updateData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/UpdateClass',
             data:JSON.stringify($scope.classList)
         }).then(function successCallback(response) {
+            $('#updateData').modal('hide');
             alert("所选班级的信息修改成功！");
             $modalInstance.close("success");
         }, function errorCallback(response) {
+            $('#updateData').modal('hide');
             alert("所选班级的信息修改失败！");
         });
     }
@@ -273,17 +361,21 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
     }
 
     $scope.addStudent = function () {
+        $('#uploadData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/UploadStudent',
-            data: JSON.stringify($scope.students)
+            data: JSON.stringify($scope.p)
         }).then(function successCallback(response) {
+            $('#uploadData').modal('hide');
             if (response.data == "上传成功") {
                 alert("数据上传成功");
+                $scope.showAllStudents();
             } else {
                 alert("部分数据上传失败，请重试");
             }
         }, function errorCallback(response) {
+            $('#uploadData').modal('hide');
             alert("数据上传失败，请重试");
         });
     }
@@ -293,6 +385,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
     });
 
     $scope.showAllStudents = function () {
+        $('#loadData').modal('show');
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/showAllStudent',
@@ -308,7 +401,9 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
             for (var i = 0; i < $scope.newPages; i++) {
                 $scope.pageList.push(i + 1);
             }
+            $('#loadData').modal('hide');
         }, function errorCallback(response) {
+            $('#loadData').modal('hide');
             alert("获取数据失败");
         });
         
@@ -320,6 +415,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
         if (classId == null) {
             $scope.showAllStudents();
         } else {
+            $('#loadData').modal('show');
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/showStudentById',
@@ -338,7 +434,9 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
                 for (var i = 0; i < $scope.newPages; i++) {
                     $scope.pageList.push(i + 1);
                 }
+                $('#loadData').modal('hide');
             }, function errorCallback(response) {
+                $('#loadData').modal('hide');
                 alert("获取数据失败");
             });
         }
@@ -420,6 +518,8 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
     var a = 0;
 
     $scope.deleteStudent = function () {
+        
+        $('#deleteData').modal('show');
         if ($scope.allChecked == true) {
             if (confirm("删除？")) {
                 for (i in $scope.items) {
@@ -437,6 +537,7 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
                 alert("请先选择想要删除的学生。");
                 return;
             }
+            a = 0;
             if (confirm("删除？")) {
                 for (i in $scope.items) {
                     if ($scope.items[i].checked) {
@@ -458,13 +559,19 @@ app.controller('studentCtrl', function ($scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
+                $('#deleteData').modal('hide');
                 $scope.showAllStudents();
+                a = 0;
+                count = 0;
                 alert("删除成功");
             }
         }, function errorCallback(response) {
             alert("学号为" + id + "的学生删除失败");
             count++;
             if (count == a) {
+                $('#deleteData').modal('hide');
+                a = 0;
+                count = 0;
                 $scope.showAllStudents();
             }
         });
@@ -478,7 +585,8 @@ app.controller('addStudentCtrl', function ($scope, $http, $modalInstance, data) 
         $modalInstance.dismiss('cancel');
     }
 
-    $scope.submitClassInfo = function () {
+    $scope.submitClassInfo = function (classId) {
+        
         var username = $scope.username;
         var name = $scope.name;
         var password = $scope.password;
@@ -493,16 +601,21 @@ app.controller('addStudentCtrl', function ($scope, $http, $modalInstance, data) 
             alert("请输入初始密码，该项为必填项！");
         } else if(password != pwd){
             alert("两次输入的密码需保持一致，请确认密码！");
+        } else if (classId == "" || classId == undefined || classId == null) {
+            alert("请选择该学生的所在班级！");
         } else {
+            $('#addData').modal('show');
             $http({
                 method: 'POST',
                 url: 'http://localhost:5451/TrainApp/AddStudent',
-                data: { "username": username, "name": name, "password": password }
+                data: { "username": username, "name": name, "password": password, "classId":classId }
             }).then(function successCallback(response) {
                 $scope.result = response.data;
+                $('#addData').modal('hide');
                 $modalInstance.close("success");
                 alert("添加学生成功。");
             }, function errorCallback(response) {
+                $('#addData').modal('hide');
                 $modalInstance.close(response.data);
                 alert("添加学生失败。");
             });
@@ -514,29 +627,95 @@ app.controller('addStudentCtrl', function ($scope, $http, $modalInstance, data) 
 
 app.controller('courseCtrl', function ($scope, $http, $modal) {
 
-    $scope.changeCourse = function (course) {
-        $scope.showAllUnit(course.id);
-        $scope.showAllKnowledge(course.id);
-        $scope.currentCourse = course;
-        $scope.courseName = course.name;
-        $scope.currentUnit = null;
-        $scope.currentKnowledge = null;
-    }
-    
-    $scope.showAllCourse = function () {
+    $scope.showCurrentCourse = function () {
         $('#loadData').modal('show');
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse',
+            url: 'http://localhost:5451/TrainApp/ShowCourseById'
         }).then(function successCallback(response) {
             $('#loadData').modal('hide');
-            $scope.courses = response.data;
+            $scope.currentCourse = response.data[0];
         }, function errorCallback(response) {
             $('#loadData').modal('hide');
             alert("获取数据失败");
         });
     }
-    $scope.showAllCourse();
+
+    $scope.showAllUnit = function () {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/QueryUnit',
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.units = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+
+    $scope.showAllKnowledge = function () {
+        $('#loadData').modal('show');
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/ShowAllKnowledge',
+        }).then(function successCallback(response) {
+            $('#loadData').modal('hide');
+            $scope.knowledges = response.data;
+        }, function errorCallback(response) {
+            $('#loadData').modal('hide');
+            alert("获取数据失败");
+        });
+    }
+    $scope.showCurrentCourse();
+    $scope.showAllUnit();
+    $scope.showAllKnowledge();
+
+    $scope.openAddUnit = function () {
+        var data = [];
+        data.push($scope.currentCourse);
+        var modalInstance = $modal.open({
+            templateUrl: 'addUnit.html',//script标签中定义的id
+            controller: 'addUnitCtrl',//modal对应的Controller
+            resolve: {
+                data: function () {//data作为modal的controller传入的参数
+                    return data;//用于传递数据
+                }
+            }
+        })
+        modalInstance.result.then(function (result) {
+            if (result == "success") {
+                $scope.showAllUnit();
+                $scope.showAllKnowledge();
+            }
+        })
+    }
+
+    $scope.openAddKnowledge = function (unit) {
+        //if ($scope.currentUnit == null) {
+        //    alert("请先选择当前单元！");
+        //    return;
+        //}
+        var data = [];
+        data.push($scope.currentCourse);
+        data.push(unit);
+        var modalInstance = $modal.open({
+            templateUrl: 'addKnowledge.html',//script标签中定义的id
+            controller: 'addKnowledgeCtrl',//modal对应的Controller
+            resolve: {
+                data: function () {//data作为modal的controller传入的参数
+                    return data;//用于传递数据
+                }
+            }
+        })
+        modalInstance.result.then(function (result) {
+            if (result == "success") {
+                $scope.showAllUnit();
+                $scope.showAllKnowledge();
+            }
+        })
+    }
 
     $scope.showFileContent = function (type) {
         var url = "";
@@ -552,25 +731,8 @@ app.controller('courseCtrl', function ($scope, $http, $modal) {
                 $scope.openUpload(type);
             }
         } else {
-            window.open(url, "_blank");
+            window.open(url, "fileContent");
         }
-    }
-
-    $scope.showAllCourseById = function () {
-        $('#loadData').modal('show');
-        $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourseById',
-            params: {
-                'id': $scope.currentCourse.id
-            }
-        }).then(function successCallback(response) {
-            $('#loadData').modal('hide');
-            $scope.currentCourse = response.data[0];
-        }, function errorCallback(response) {
-            $('#loadData').modal('hide');
-            alert("获取数据失败");
-        });
     }
 
     //上传
@@ -595,242 +757,102 @@ app.controller('courseCtrl', function ($scope, $http, $modal) {
         })
     }
 
-    $scope.showAllUnit = function (id) {
-        $('#loadData').modal('show');
-        $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/QueryUnit',
-            params: {
-                'courseId': id
-            }
-        }).then(function successCallback(response) {
-            $('#loadData').modal('hide');
-            $scope.units = response.data;
-        }, function errorCallback(response) {
-            $('#loadData').modal('hide');
-            alert("获取数据失败");
-        });
-    }
-
-    $scope.showAllKnowledge = function (id) {
-        $('#loadData').modal('show');
-        $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowAllKnowledge',
-            params: {
-                'courseId': id
-            }
-        }).then(function successCallback(response) {
-            $('#loadData').modal('hide');
-            $scope.knowledges = response.data;
-        }, function errorCallback(response) {
-            $('#loadData').modal('hide');
-            alert("获取数据失败");
-        });
-    }
     
-    $scope.deleteUnit = function (id) {
-        if ($scope.currentUnit == null) {
-            alert("请先选择当前单元！");
-            return;
-        }
-        if (confirm("确认删除编号为" + id + "的课程单元？")) {
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/DeleteUnit',
-                params: {
-                    'courseId': $scope.currentCourse.id,
-                    'id': id
-                }
-            }).then(function successCallback(response) {
-                $scope.result = response.data;
-                $scope.showAllUnit($scope.currentCourse.id);
-                $scope.showAllKnowledge($scope.currentCourse.id);
-                $scope.currentUnit = null;
-                alert("删除成功");
-            }, function errorCallback(response) {
-                alert("删除失败");
-            });
-        }
-    }
+    
+    //$scope.deleteUnit = function (id) {
+    //    if ($scope.currentUnit == null) {
+    //        alert("请先选择当前单元！");
+    //        return;
+    //    }
+    //    if (confirm("确认删除编号为" + id + "的课程单元？")) {
+    //        $http({
+    //            method: 'GET',
+    //            url: 'http://localhost:5451/TrainApp/DeleteUnit',
+    //            params: {
+    //                'courseId': $scope.currentCourse.id,
+    //                'id': id
+    //            }
+    //        }).then(function successCallback(response) {
+    //            $scope.result = response.data;
+    //            $scope.showAllUnit($scope.currentCourse.id);
+    //            $scope.showAllKnowledge($scope.currentCourse.id);
+    //            $scope.currentUnit = null;
+    //            alert("删除成功");
+    //        }, function errorCallback(response) {
+    //            alert("删除失败");
+    //        });
+    //    }
+    //}
 
-    $scope.deleteKnowlwdge = function (id) {
-        if ($scope.currentKnowledge == null) {
-            alert("请先选择当前知识点！");
-            return;
-        }
-        if(confirm("确认删除编号为"+id+"的知识点？")){
-            $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/DeleteKnowledge',
-            params: {
-                'courseId': $scope.currentCourse.id,
-                'id': id
-            }
-            }).then(function successCallback(response) {
-                $scope.result = response.data;
-                $scope.showAllUnit($scope.currentCourse.id);
-                $scope.showAllKnowledge($scope.currentCourse.id);
-                $scope.currentKnowledge = null;
-                alert("删除成功");
-            }, function errorCallback(response) {
-                alert("删除失败");
-            });
-        } 
+    //$scope.deleteKnowlwdge = function (id) {
+    //    if ($scope.currentKnowledge == null) {
+    //        alert("请先选择当前知识点！");
+    //        return;
+    //    }
+    //    if(confirm("确认删除编号为"+id+"的知识点？")){
+    //        $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/DeleteKnowledge',
+    //        params: {
+    //            'courseId': $scope.currentCourse.id,
+    //            'id': id
+    //        }
+    //        }).then(function successCallback(response) {
+    //            $scope.result = response.data;
+    //            $scope.showAllUnit($scope.currentCourse.id);
+    //            $scope.showAllKnowledge($scope.currentCourse.id);
+    //            $scope.currentKnowledge = null;
+    //            alert("删除成功");
+    //        }, function errorCallback(response) {
+    //            alert("删除失败");
+    //        });
+    //    } 
         
-    }
+    //}
 
-    $scope.openModifyName = function (content, type) {
-        if (type == 1) {
-            if ($scope.currentUnit == null) {
-                alert("请先选择当前单元！");
-                return;
-            }
-        } else {
-            if ($scope.currentKnowledge == null) {
-                alert("请先选择当前知识点！");
-                return;
-            }
-        }
-        var data = [];
-        data.push(content);
-        data.push(type);
-        var modalInstance = $modal.open({
-            templateUrl: 'modifyName.html',//script标签中定义的id
-            controller: 'updateNameCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            //if (result == "success") {
-            //    $scope.showAllUnit($scope.currentCourse.id);
-            //    $scope.showAllKnowledge($scope.currentCourse.id);
-            //}
-            $scope.showAllUnit($scope.currentCourse.id);
-            $scope.showAllKnowledge($scope.currentCourse.id);
-            if (type == 1) {
-                $scope.currentUnit.name = result;
-            } else {
-                $scope.currentKnowledge.name = result;
-            }
-        })
-    }
+    //$scope.openModifyName = function (content, type) {
+    //    if (type == 1) {
+    //        if ($scope.currentUnit == null) {
+    //            alert("请先选择当前单元！");
+    //            return;
+    //        }
+    //    } else {
+    //        if ($scope.currentKnowledge == null) {
+    //            alert("请先选择当前知识点！");
+    //            return;
+    //        }
+    //    }
+    //    var data = [];
+    //    data.push(content);
+    //    data.push(type);
+    //    var modalInstance = $modal.open({
+    //        templateUrl: 'modifyName.html',//script标签中定义的id
+    //        controller: 'updateNameCtrl',//modal对应的Controller
+    //        resolve: {
+    //            data: function () {//data作为modal的controller传入的参数
+    //                return data;//用于传递数据
+    //            }
+    //        }
+    //    })
+    //    modalInstance.result.then(function (result) {
+    //        //if (result == "success") {
+    //        //    $scope.showAllUnit($scope.currentCourse.id);
+    //        //    $scope.showAllKnowledge($scope.currentCourse.id);
+    //        //}
+    //        $scope.showAllUnit($scope.currentCourse.id);
+    //        $scope.showAllKnowledge($scope.currentCourse.id);
+    //        if (type == 1) {
+    //            $scope.currentUnit.name = result;
+    //        } else {
+    //            $scope.currentKnowledge.name = result;
+    //        }
+    //    })
+    //}
 
-    $scope.openAddUnit = function () {
-        var data = [];
-        data.push($scope.currentCourse);
-        var modalInstance = $modal.open({
-            templateUrl: 'addUnit.html',//script标签中定义的id
-            controller: 'addUnitCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            if (result == "success") {
-                $scope.showAllUnit($scope.currentCourse.id);
-                $scope.showAllKnowledge($scope.currentCourse.id);
-            }
-        })
-    }
-
-    $scope.openAddKnowledge = function (unit) {
-        if ($scope.currentUnit == null) {
-            alert("请先选择当前单元！");
-            return;
-        }
-        var data = [];
-        data.push($scope.currentCourse);
-        data.push(unit);
-        var modalInstance = $modal.open({
-            templateUrl: 'addKnowledge.html',//script标签中定义的id
-            controller: 'addKnowledgeCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            if (result == "success") {
-                $scope.showAllUnit($scope.currentCourse.id);
-                $scope.showAllKnowledge($scope.currentCourse.id);
-            }
-        })
-    }
-
-    $scope.addCourse = function () {
-        $scope.judge = false;
-        $scope.currentCourse = null;
-        $scope.units = null;
-        $scope.knowledges = null;
-        $scope.currentUnit = null;
-        $scope.currentKnowledge = null;
-    }
-
-    $scope.openAddCourse = function () {
-        var data = [];
-        var modalInstance = $modal.open({
-            templateUrl: 'addCourse.html',//script标签中定义的id
-            controller: 'addCourseCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            if (result == "success") {
-                $scope.showAllCourse();
-            }
-        })
-    }
-
-    $scope.changeUnit = function (unit) {
-        $scope.currentUnit = unit;
-        $scope.currentKnowledge = null;
-    }
-
-    $scope.changeKnowledge = function (knowledge) {
-        $scope.currentKnowledge = knowledge;
-    }
 
 })
 
-app.controller('addCourseCtrl', function ($scope, $http, $modalInstance, data) {
 
-    $scope.closeDialog = function () {
-        $modalInstance.dismiss('cancel');
-    }
-
-    $scope.submitNewCourse = function () {
-        $('#operate').modal('show');
-        $http({
-            method: 'POST',
-            url: 'http://localhost:5451/TrainApp/AddCourse',
-            data: {
-                "id": $scope.newId,
-                "name": $scope.newName,
-            }
-        }).then(function successCallback(response) {
-            $('#operate').modal('hide');
-            if (response.data == "fail") {
-                alert("信息添加失败,id冲突");
-            } else {
-                $modalInstance.close("success");
-                alert("信息添加成功");
-            }
-        }, function errorCallback(response) {
-            $('#operate').modal('hide');
-            alert("信息添加失败");
-        });
-    }
-})
 
 app.controller('uploadFileCtrl', function ($scope, $http, $modalInstance, data) {
     app.directive('file', function () {
@@ -970,7 +992,7 @@ app.controller('addUnitCtrl', function ($scope, $http, $modalInstance, data) {
     }
 
     $scope.submitNewUnit = function () {
-        $('#operate').modal('show');
+        $('#addData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/AddUnit',
@@ -980,7 +1002,7 @@ app.controller('addUnitCtrl', function ($scope, $http, $modalInstance, data) {
                 "courseId": $scope.course.id
             }
         }).then(function successCallback(response) {
-            $('#operate').modal('hide');
+            $('#addData').modal('hide');
             if (response.data == "失败") {
                 alert("信息添加失败,id冲突");
             } else {
@@ -988,7 +1010,7 @@ app.controller('addUnitCtrl', function ($scope, $http, $modalInstance, data) {
                 alert("信息添加成功");
             }
         }, function errorCallback(response) {
-            $('#operate').modal('hide');
+            $('#addData').modal('hide');
             alert("信息添加失败");
         });
     }
@@ -1006,7 +1028,7 @@ app.controller('addKnowledgeCtrl', function ($scope, $http, $modalInstance, data
     }
 
     $scope.submitNewKnowledge = function () {
-        $('#operate').modal('show');
+        $('#addData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/AddKnowledge',
@@ -1017,7 +1039,7 @@ app.controller('addKnowledgeCtrl', function ($scope, $http, $modalInstance, data
                 "unitId": $scope.unit.id
             }
         }).then(function successCallback(response) {
-            $('#operate').modal('hide');
+            $('#addData').modal('hide');
             if (response.data == "失败") {
                 alert("信息添加失败,id冲突");
             } else {
@@ -1025,7 +1047,7 @@ app.controller('addKnowledgeCtrl', function ($scope, $http, $modalInstance, data
                 alert("信息添加成功");
             }
         }, function errorCallback(response) {
-            $('#operate').modal('hide');
+            $('#addData').modal('hide');
             alert("信息添加失败");
         });
     }
@@ -2363,7 +2385,7 @@ app.controller('examinationCtrl', function ($scope, $http) {
                 $scope.examName = $scope.examinationsInfo[0].name;
                 //$scope.examQuestionList = $scope.examinationsInfo[0].questionList;
                 $scope.examQuestions = $scope.examinationsInfo[0].examQuestion;
-                localStorage.clear();
+                //localStorage.clear();
                 localStorage.setItem("examName", $scope.examName);
                 localStorage.setItem("examId", $scope.examId);
                 //localStorage.setItem("examQuestionList", $scope.examQuestionList);
@@ -2402,21 +2424,28 @@ app.controller('examinationCtrl', function ($scope, $http) {
     }
     //$scope.showDetails($scope.examQuestions);
 
-    $scope.begin = function () {
+    $scope.begin = function (id, num, diff) {
+        if (id == undefined || id == "" || num == undefined || num == "" || diff == undefined || diff == "") {
+            alert("请填写完整的组卷要求");
+            return;
+        }
+        $('#loadingPaper').modal('show');
+        var totalNum = parseInt(num);
+        var difficulty = parseFloat(diff);
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/RandomPaper',
             data: {
-                "courseId": 10001,
-                "totalNum": 20,
-                "difficulty": 1.8,
-                "unitWeight":"0.5;0.5"
+                "courseId": id,
+                "totalNum": totalNum,
+                "difficulty": difficulty
             }
         }).then(function successCallback(response) {
             $scope.result = response.data;
+            $('#loadingPaper').modal('hide');
+            alert("组卷成功");
             console.log($scope.result);
         }, function errorCallback(response) {
-
             alert("失败");
         });
     }

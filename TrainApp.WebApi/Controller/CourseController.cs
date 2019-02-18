@@ -18,6 +18,16 @@ namespace TrainApp.WebApi
         public List<Course_View> cList = new List<Course_View>();
         public List<Course_View> cl = new List<Course_View>();
         //public List<Course_View> cl2 = new List<Course_View>();
+
+        [Route("SaveCurrentCourse")]
+        [HttpGet]
+        public object GetCurrentCourse(String id)
+        {
+            HttpCookie cookie = new HttpCookie("CurrentCourse");
+            cookie["CourseId"] = id;
+            HttpContext.Current.Response.Cookies.Add(cookie);
+            return "Success";
+        }
         
 
         [HttpGet]                       //定义访问方式（Post或Get方法）
@@ -67,13 +77,15 @@ namespace TrainApp.WebApi
         }
 
 
-
         [Route("ShowCourseById")]
         [HttpGet]
-        public object Getselect(int id)
+        public object Getselect()
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
-            query.WhereEqualTo("id", id);
+            query.WhereEqualTo("id", courseId);
             var future = Bmob.FindTaskAsync<Course>("Course", query);
             try
             {

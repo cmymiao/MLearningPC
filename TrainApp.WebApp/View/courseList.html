@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>主页</title>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="../CSS/common/bootstrap.min.css" />
+    <link rel="stylesheet" href="../CSS/myCSS/login.css" />
+    <link rel="stylesheet" href="../CSS/myCSS/myCss.css" />
+    <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../CSS/myCSS/style.css" />
+
+    <script src="../JavaScript/common/angular.min.js"></script>
+    <script src="../JavaScript/common/jquery.min.js"></script>
+    <script src="../JavaScript/common/bootstrap.min.js"></script>
+    <script src="../JavaScript/common/ui-bootstrap-tpls.min.js"></script>
+    <script src="../JavaScript/common/Bmob-1.6.3.min.js"></script>
+    <script src="../JavaScript/common/xlsx.core.min.js"></script>
+
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <div class="container-fluid">
+        <div id="loadData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
+        <div id="topbar" class="row topbar_color">
+            <div class="col-xs-12 col-sm-6 col-md-8 topbar_bg">
+
+            </div>
+            <div class="col-xs-6 col-md-4 text-right">
+                <a href="../index.html" target="_blank">退出登录</a>
+            </div>
+        </div>
+        <div class="row tab-content">
+            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="background:#0094ff;height:200px;margin-top:20px" ng-click="chooseCourse(course.id)">
+                {{course.name}}
+            </div>
+            <div class="col-sm-offset-2 col-sm-3 text-center" style="background:#0094ff;height:200px;margin-top:20px" ng-click="openAddCourse()">
+                添加课程...
+            </div>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="addCourse.html">
+        <div>
+            <div class="modal-header">
+                <h4 class="modal-title" id="title">请填写课程信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">课程编号</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" ng-model="newId" placeholder="课程编号(必填项)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">课程名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" ng-model="newName" placeholder="课程名称(必填项)">
+                        </div>
+                    </div>
+                </form>
+                <div id="addData" class="modal fade" data-keyboard="false"
+                     data-backdrop="static" data-role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div id="loading" class="loading">添加中。。。</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="closeDialog()">取消</button>
+                <button type="button" class="btn btn-primary" ng-click="submitNewCourse()">确认</button>
+            </div>
+        </div>
+    </script>
+
+    <script src="../JavaScript/myJS/homeJs.js"></script>
+</body>
+</html>

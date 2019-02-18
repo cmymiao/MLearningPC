@@ -10,6 +10,5 @@ namespace TrainApp.WebApi.ViewModel
         public int courseId { get; set; }
         public int totalNum { get; set; }
         public String difficulty { get; set; }
-        public String unitWeight { get; set; }
     }
 }

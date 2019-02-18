@@ -121,12 +121,12 @@ namespace TrainApp.WebApi
             int k = n + 1;
             int realNum = 0;
             Double paperDifficulty = Convert.ToDouble(require.difficulty);//试卷难度系数
-            String[] weight = require.unitWeight.Split(new[] { ';' });
-            Double[] unitWeight = new Double[weight.Length];
-            for (int i = 0; i < weight.Length; i++)
-            {
-                unitWeight[i] = Convert.ToDouble(weight[i]);
-            }
+            //String[] weight = require.unitWeight.Split(new[] { ';' });
+            //Double[] unitWeight = new Double[weight.Length];
+            //for (int i = 0; i < weight.Length; i++)
+            //{
+            //    unitWeight[i] = Convert.ToDouble(weight[i]);
+            //}
             //计算每个难度级别的题目个数
             Double avg = paperDifficulty / (Double)(k + 1); //平均期望
             Double pa = 1;//组合数的值
