@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body ng-controller="uploadQuestionCtrl">
+    <div class="container-fluid">
+        <div id="uploadQuestionData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">上传中。。。</div>
+        </div>
+        <div class="row text-center" style="margin-top:20px">
+            <h2>上传全部习题</h2>
+        </div>
+            <div class="row" style="margin-top:20px;background:#b5d5ff">
+                <h4 style="margin-left:20px">上传习题文件</h4>
+            </div>
+            <form>
+                <div class="centers" style="margin-top:20px;">
+                    <h4>请选择Excel文件并上传</h4>
+                    <div class="form-group" style="margin-top:20px;">
+                        <input type="file" ng-src={{files[0].name}} onchange='angular.element(this).scope().fileChanged(this)' /><br>
+                        <button type="submit" id="upload" class="btn btn-primary" ng-click="uploadQuestion()">上传</button>
+                    </div>
+                </div>
+            </form>
+    </div>
+
+</body>
+</html>

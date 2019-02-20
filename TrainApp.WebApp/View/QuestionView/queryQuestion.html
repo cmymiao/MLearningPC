@@ -5,8 +5,18 @@
     <title></title>
     <meta charset="utf-8" />
 </head>
-<body ng-controller="questionCtrl">
+<body ng-controller="queryQuestionCtrl">
     <div class="container-fluid">
+        <div id="loadQuestionData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
+        <div id="deleteQuestionData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">删除中。。。</div>
+        </div>
         <div class="row text-center" style="margin-top:20px">
             <h2>查询习题</h2>
         </div>
@@ -16,19 +26,22 @@
         <div class="row" style="margin-top:10px">
             <form class="form-horizontal">
                 <div class="form-group">
-                    <div class="col-xs-3">
+                    <!--<div class="col-xs-3">
                         <select ng-model="courseId" class="form-control" ng-options="course.id as course.name for course in courseInfo" ng-change="selectedUnit(courseId)">
                             <option value="">-----请选择所属课程-----</option>
                         </select>
-                    </div>
-                    <div class="col-xs-3">
-                        <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo">
+                    </div>-->
+                    <label class="col-xs-2 control-label">
+                        请选择想要查看的课程单元
+                    </label>
+                    <div class="col-xs-4">
+                        <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo" ng-change="queryQuestion(unitId)" ng-click="showAllUnit()">
                             <option value="">------全部课程单元------</option>
                         </select>
                     </div>
-                    <div class="col-xs-1">
-                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryQuestion(courseId,unitId)">查询</button>
-                    </div>
+                    <!--<div class="col-xs-1">
+                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryQuestion(unitId)">查询</button>
+                    </div>-->
                     </div>
             </form>
         </div>
@@ -100,8 +113,14 @@
         </nav>
     </div>
 
+    <!--添加题目模态框-->
     <script type="text/ng-template" id="addQuestions.html">
         <div>
+            <div id="addQuestionData" class="modal fade" data-keyboard="false"
+                 data-backdrop="static" data-role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="loading" class="loading">添加中。。。</div>
+            </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="title">请填写班级信息</h4>
             </div>
@@ -125,13 +144,13 @@
                     <input type="text" class="form-control myModal-input myModal-header-font" ng-model="difficulty" placeholder="请输入难度系数">
                 </div>
                 <div class="form-group">
-                    <select ng-model="courseId" ng-options="course.id as course.name for course in courseInfo" ng-change="selectedUnit(courseId)">
+                    <!--<select ng-model="courseId" ng-options="course.id as course.name for course in courseInfo" ng-change="selectedUnit(courseId)">
                         <option value="">---请选择所属课程---</option>
-                    </select>
-                    <select ng-model="unitId" ng-options="unit.id as unit.name for unit in unitInfo" ng-change="selectedKnowledge(unitId,courseId)">
+                    </select>-->
+                    <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo" ng-change="selectedKnowledge(unitId)">
                         <option value="">---请选择所属课程单元---</option>
                     </select>
-                    <select ng-model="knowledgeId" ng-options="knowledge.id as knowledge.name for knowledge in knowledgeInfo">
+                    <select ng-model="knowledgeId" class="form-control" class="form-control" ng-options="knowledge.id as knowledge.name for knowledge in knowledgeInfo">
                         <option value="">---请选择涉及知识点---</option>
                     </select>
                 </div>
@@ -142,10 +161,14 @@
             </div>
         </div>
     </script>
-
+    <!--修改题目模态框-->
     <script type="text/ng-template" id="updateQuestions.html">
         <div>
-            <div class="modal-header">
+            <div id="updateQuestionData" class="modal fade" data-keyboard="false"
+                 data-backdrop="static" data-role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="loading" class="loading">修改中。。。</div>
+            </div><div class="modal-header">
                 <h4 class="modal-title" id="title">请修改题目信息</h4>
             </div>
             <div class="modal-body">
@@ -201,7 +224,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">所属课程编号</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" ng-model="x.courseId" placeholder="所属课程编号">
+                            <input type="text" class="form-control" ng-model="x.courseId" placeholder="所属课程编号" ng-disabled="true">
                         </div>
                     </div>
                     <div class="form-group">

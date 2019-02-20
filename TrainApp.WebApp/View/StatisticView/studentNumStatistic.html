@@ -7,6 +7,11 @@
 </head>
 <body ng-controller="studentStatisticCtrl">
     <div class="container-fluid">
+        <div id="loadStudentNumstatisticData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
         <div class="row text-center" style="margin-top:20px">
             <h2>学生答题数量统计</h2>
         </div>
@@ -21,18 +26,18 @@
                             <option value="">-----请选择班级-----</option>
                         </select>
                     </div>
-                    <div class="col-xs-3">
+                    <!--<div class="col-xs-3">
                         <select ng-model="courseId" class="form-control" ng-options="course.id as course.name for course in courseInfo" ng-change="selectedUnit(courseId)">
                             <option value="">-----请选择所属课程-----</option>
                         </select>
-                    </div>
+                    </div>-->
                     <div class="col-xs-3">
                         <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo">
                             <option value="">------全部课程单元------</option>
                         </select>
                     </div>
                     <div class="col-xs-1">
-                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryFeedback(classId,unitId,courseId)">查询</button>
+                        <button type="submit" id="upload" class="btn btn-primary btn-block" ng-click="queryFeedback(classId,unitId)">查询</button>
                     </div>
                 </div>
             </form>
@@ -47,7 +52,7 @@
                     <thead style="overflow-x:auto;">
                         <tr class="text-center" style="background:#b5d5ff">
                             <td width="45px">序号</td>
-                            <td width="100px">姓名</td>
+                            <td width="100px">学号</td>
                             <td width="100px">昵称</td>
                             <td width="100px">答题数量</td>
                         </tr>

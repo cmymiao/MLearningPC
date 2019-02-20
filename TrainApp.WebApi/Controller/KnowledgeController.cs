@@ -40,11 +40,15 @@ namespace TrainApp.WebApi
             return ResultToJson.toJson(kList);      //返回数据需要json格式
 
         }
+        //根据选择的课程单元显示知识点
         [Route("SelectedKnowledge")]
         [HttpGet]
-        public object GetSelectedKnowledge(int unitId,int courseId)
+        public object GetSelectedKnowledge(int unitId)
         {
             String objectId = "";
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.WhereEqualTo("courseId", courseId);
             var f = Bmob.FindTaskAsync<Knowledge>("Knowledge", query);

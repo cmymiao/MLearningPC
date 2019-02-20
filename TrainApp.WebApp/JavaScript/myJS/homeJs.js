@@ -1343,6 +1343,7 @@ app.controller('uploadResourceCtrl', function ($scope, $http, $modalInstance, da
 app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
 
     $scope.showAllQuestion = function () {
+        $('#loadQuestionData').modal('show');
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/ShowQuestion',
@@ -1358,8 +1359,9 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
             for (var i = 0; i < $scope.newPages; i++) {
                 $scope.pageList.push(i + 1);
             }
-
+            $('#loadQuestionData').modal('hide');
         }, function errorCallback(response) {
+            $('#loadQuestionData').modal('hide');
             alert("获取数据失败");
         });
     }
@@ -1405,11 +1407,12 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
     var count = 0;
     var a = 0;
 
-    $scope.deleteQuestion = function () {
+    $scope.deleteQuestion = function () {        
         if ($scope.allChecked == true) {
             if (confirm("删除所有题目？")) {
                 for (i in $scope.items) {
                     a++;
+                    $('#deleteQuestionData').modal('show');
                     $scope.delete($scope.items[i].id, $scope.items[i].courseId);
                 }
             }
@@ -1418,6 +1421,7 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
                 for (i in $scope.items) {
                     if ($scope.items[i].checked) {
                         a++;
+                        $('#deleteQuestionData').modal('show');
                         $scope.delete($scope.items[i].id, $scope.items[i].courseId);
                     }
                 }
@@ -1426,6 +1430,7 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
     }
 
     $scope.delete = function (id, courseId) {
+
         $http({
             method: 'GET',
             url: 'http://localhost:5451/TrainApp/DeleteQuestion',
@@ -1436,6 +1441,7 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
+                $('#deleteQuestionData').modal('hide');
                 $scope.showAllQuestion();
                 alert("删除成功");
             }
@@ -1443,6 +1449,7 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
             alert("题号为" + id + "的题目删除失败");
             count++;
             if (count == a) {
+                $('#deleteQuestionData').modal('hide');
                 $scope.showAllQuestion();
             }
         });
@@ -1506,122 +1513,83 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
     };
 
     //下拉框
-    $scope.showCourse = function () {
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+
+    $scope.showAllUnit = function () {
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/QueryUnit',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.unitInfo = response.data;
         }, function errorCallback(response) {
+            alert("获取数据失败");
         });
     }
-    $scope.showCourse();
-    $scope.selectedUnit = function (courseId) {
-        $scope.unitId = "";
-        if (courseId != "") {
+    $scope.showAllUnit();
+    //$scope.selectedUnit = function (courseId) {
+    //    $scope.unitId = "";
+    //    if (courseId != "") {
+    //        $http({
+    //            method: 'GET',
+    //            url: 'http://localhost:5451/TrainApp/SelectedUnit',
+    //            params: {
+    //                'courseId': courseId
+    //            }
+    //        }).then(function successCallback(response) {
+    //            $scope.unitInfo = response.data;
+    //        }, function errorCallback(response) {
+    //            alert("查询失败");
+    //        });
+    //    }
+    //    else { alert("错误"); }
+    //}
+
+
+    $scope.queryQuestion = function (unitId) {
+        //console.log(courseId + " " + unitId);
+        if (unitId != "" && unitId != null && unitId != undefined) {  
             $http({
                 method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
+                url: 'http://localhost:5451/TrainApp/QueryUnitQuestion',
                 params: {
-                    'courseId': courseId
+                    //'courseId': courseId,
+                    'unitId': unitId
                 }
             }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
+                $scope.questionInfo = response.data;
+                alert("查询成功");
+                $scope.pageSize = 10;
+                $scope.pages = Math.ceil($scope.questionInfo.length / $scope.pageSize); //分页数
+                $scope.newPages = $scope.pages > 5 ? 5 : $scope.pages;
+                $scope.pageList = [];
+                $scope.selPage = 1;
+                $scope.items = $scope.questionInfo.slice(0, $scope.pageSize);
+                //分页要repeat的数组
+                for (var i = 0; i < $scope.newPages; i++) {
+                    $scope.pageList.push(i + 1);
+                }
             }, function errorCallback(response) {
                 alert("查询失败");
             });
         }
-        else { alert("错误"); }
-    }
-
-
-    $scope.queryQuestion = function (courseId, unitId) {
-        //console.log(courseId + " " + unitId);
-        if (courseId != "" && courseId != null && courseId != undefined) {
-            if (unitId == "" || unitId == null || unitId == undefined) {
-                $http({
-                    method: 'GET',
-                    url: 'http://localhost:5451/TrainApp/QueryCourseQuestion',
-                    params: {
-                        'courseId': courseId
-                    }
-                }).then(function successCallback(response) {
-                    $scope.questionInfo = response.data;
-                    alert("查询成功");
-                    $scope.pageSize = 10;
-                    $scope.pages = Math.ceil($scope.questionInfo.length / $scope.pageSize); //分页数
-                    $scope.newPages = $scope.pages > 5 ? 5 : $scope.pages;
-                    $scope.pageList = [];
-                    $scope.selPage = 1;
-                    $scope.items = $scope.questionInfo.slice(0, $scope.pageSize);
-                    //分页要repeat的数组
-                    for (var i = 0; i < $scope.newPages; i++) {
-                        $scope.pageList.push(i + 1);
-                    }
-                }, function errorCallback(response) {
-                    alert("查询失败");
-                });
-            }
-            else {
-                $http({
-                    method: 'GET',
-                    url: 'http://localhost:5451/TrainApp/QueryUnitQuestion',
-                    params: {
-                        'courseId': courseId,
-                        'unitId': unitId
-                    }
-                }).then(function successCallback(response) {
-                    $scope.questionInfo = response.data;
-                    alert("查询成功");
-                    $scope.pageSize = 10;
-                    $scope.pages = Math.ceil($scope.questionInfo.length / $scope.pageSize); //分页数
-                    $scope.newPages = $scope.pages > 5 ? 5 : $scope.pages;
-                    $scope.pageList = [];
-                    $scope.selPage = 1;
-                    $scope.items = $scope.questionInfo.slice(0, $scope.pageSize);
-                    //分页要repeat的数组
-                    for (var i = 0; i < $scope.newPages; i++) {
-                        $scope.pageList.push(i + 1);
-                    }
-                }, function errorCallback(response) {
-                    alert("查询失败");
-                });
-            }
-        }
         else {
-            alert("请选择要查询的课程名");
+            $scope.showAllQuestion();
         }
     }
 
 })
 
-app.controller('questionCtrl', function ($scope, $http, $modal) {
+app.controller('uploadQuestionCtrl', function ($scope, $http, $modal) {
 
-    var classesId = [];
-
-    $scope.showAllQuestion = function () {
-        $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowQuestion',
-        }).then(function successCallback(response) {
-            $scope.questions = response.data;
-            $scope.pageSize = 10;
-            $scope.pages = Math.ceil($scope.questions.length / $scope.pageSize); //分页数
-            $scope.newPages = $scope.pages > 5 ? 5 : $scope.pages;
-            $scope.pageList = [];
-            $scope.selPage = 1;
-            $scope.items = $scope.questions.slice(0, $scope.pageSize);
-            //分页要repeat的数组
-            for (var i = 0; i < $scope.newPages; i++) {
-                $scope.pageList.push(i + 1);
-            }
-
-        }, function errorCallback(response) {
-            alert("获取数据失败");
-        });
-    }
-
-    $scope.showAllQuestion();
     app.directive('file', function () {
         return {
             scope: {
@@ -1697,162 +1665,24 @@ app.controller('questionCtrl', function ($scope, $http, $modal) {
     }
 
     $scope.uploadQuestion = function () {
-        //alert("正在上传···请等待");
         document.getElementById("upload").innerText = "正在上传请稍后...";
+        $('#uploadQuestionData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/UploadQuestion',
             data: JSON.stringify($scope.p)
         }).then(function successCallback(response) {
+            $('#uploadQuestionData').modal('hide');
             $scope.objectId = response.data;
             alert($scope.objectId);
+            alert("数据上传成功");
             document.getElementById("upload").innerText = "Submit";
         }, function errorCallback(response) {
-
+            $('#uploadQuestionData').modal('hide');
+            alert("数据上传失败");
         });
     }
-    $scope.showAllQuestion();
-
-    $scope.allChecked = false;
-
-    $scope.chooseAll = function () {
-        $scope.allChecked = event.target.checked;
-        for (i in $scope.items) {
-            $scope.items[i].checked = event.target.checked;
-        }
-    };
-
-    $scope.chooseQuestion = function (index) {
-        for (i in $scope.items) {
-            if (!$scope.items[i].checked) {
-                $scope.allChecked = false;
-                return;
-            }
-        }
-        $scope.allChecked = true;
-    }
-
-    $scope.openAddQuestion = function () {
-        var data = "通过modal传递的数据";
-        var modalInstance = $modal.open({
-            templateUrl: 'addQuestions.html',//script标签中定义的id
-            controller: 'addQuestionCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            if (result == "success") {
-                $scope.showAllQuestion();
-            }
-        })
-    }
-
-    var count = 0;
-    var a = 0;
-
-    $scope.deleteQuestion = function () {
-        if ($scope.allChecked == true) {
-            if (confirm("删除所有题目？")) {
-                for (i in $scope.items) {
-                    a++;
-                    $scope.delete($scope.items[i].id, $scope.items[i].courseId);
-                }
-            }
-        } else {
-            if (confirm("确认删除所选题目？")) {
-                for (i in $scope.items) {
-                    if ($scope.items[i].checked) {
-                        a++;
-                        $scope.delete($scope.items[i].id, $scope.items[i].courseId);
-                    }
-                }
-            }
-        }
-    }
-
-    $scope.delete = function (id, courseId) {
-        $http({
-            method: 'GET',
-            url: 'http://localhost:5451/TrainApp/DeleteQuestion',
-            params: {
-                'id': id,
-                'courseId': courseId
-            }
-        }).then(function successCallback(response) {
-            count++;
-            if (count == a) {
-                $scope.showAllQuestion();
-                alert("删除成功");
-            }
-        }, function errorCallback(response) {
-            alert("题号为" + id + "的题目删除失败");
-            count++;
-            if (count == a) {
-                $scope.showAllQuestion();
-            }
-        });
-    }
-
-    $scope.modifyQuestionInfo = function () {
-        var data = [];
-        for (i in $scope.items) {
-            if ($scope.items[i].checked) {
-                data.push($scope.items[i]);
-            }
-        }
-        var modalInstance = $modal.open({
-            templateUrl: 'updateQuestions.html',//script标签中定义的id
-            controller: 'updateQuestionCtrl',//modal对应的Controller
-            resolve: {
-                data: function () {//data作为modal的controller传入的参数
-                    return data;//用于传递数据
-                }
-            }
-        })
-        modalInstance.result.then(function (result) {
-            if (result == "success") {
-                $scope.showAllQuestion();
-            }
-        })
-    }
-    //设置表格数据源(分页)
-    $scope.setData = function () {
-        $scope.items = $scope.questions.slice(($scope.pageSize * ($scope.selPage - 1)), ($scope.selPage * $scope.pageSize));//通过当前页数筛选出表格当前显示数据
-    }
-
-    //打印当前选中页索引
-    $scope.selectPage = function (page) {
-        //不能小于1大于最大
-        if (page < 1 || page > $scope.pages) return;
-        //最多显示分页数5
-        if (page > 2) {
-            //因为只显示5个页数，大于2页开始分页转换
-            var newpageList = [];
-            for (var i = (page - 3) ; i < ((page + 2) > $scope.pages ? $scope.pages : (page + 2)) ; i++) {
-                newpageList.push(i + 1);
-            }
-            $scope.pageList = newpageList;
-        }
-        $scope.selPage = page;
-        $scope.setData();
-        $scope.isActivePage(page);
-    };
-    //设置当前选中页样式
-    $scope.isActivePage = function (page) {
-        return $scope.selPage == page;
-    };
-    //上一页
-    $scope.Previous = function () {
-        $scope.selectPage($scope.selPage - 1);
-    }
-    //下一页
-    $scope.Next = function () {
-        $scope.selectPage($scope.selPage + 1);
-    };
-
+ 
 })
 
 app.controller('updateQuestionCtrl', function ($scope, $http, $modalInstance, data) {
@@ -1875,14 +1705,17 @@ app.controller('updateQuestionCtrl', function ($scope, $http, $modalInstance, da
     }
 
     $scope.update = function () {
+        $('#updateQuestionData').modal('show');
         $http({
             method: 'POST',
             url: 'http://localhost:5451/TrainApp/UpdateQuestion',
             data: JSON.stringify($scope.questionList)
         }).then(function successCallback(response) {
+            $('#updateQuestionData').modal('hide');
             alert("所选题目的信息修改成功！");
             $modalInstance.close("success");
         }, function errorCallback(response) {
+            $('#updateQuestionData').modal('hide');
             alert("所选题目的信息修改失败！");
         });
     }
@@ -1904,7 +1737,7 @@ app.controller('addQuestionCtrl', function ($scope, $http, $modalInstance, data)
         var answer = $scope.answer;
         var analysis = $scope.analysis;
         var id = parseInt($scope.id);
-        var courseId = parseInt($scope.courseId);
+        //var courseId = parseInt($scope.courseId);
         var unitId = parseInt($scope.unitId);
         var knowledgeId = $scope.knowledgeId;
         var difficulty = parseInt($scope.difficulty);
@@ -1915,51 +1748,64 @@ app.controller('addQuestionCtrl', function ($scope, $http, $modalInstance, data)
         } else {
             //document.getElementById("title").innerText = "提示";
             //document.getElementById("submit").innerText = "正在上传请稍后...";
+            $('#addQuestionData').modal('show');
             $http({
                 method: 'POST',
                 url: 'http://localhost:5451/TrainApp/AddQuestion',
-                data: { "question": question, "id": id, "a": a, "b": b, "c": c, "d": d, "answer": answer, "analysis": analysis, "courseId": courseId, "unitId": unitId, "knowledgeId": knowledgeId, "difficulty": difficulty, "righyNum": righyNum, "totalNum": totalNum }
+                data: { "question": question, "id": id, "a": a, "b": b, "c": c, "d": d, "answer": answer, "analysis": analysis, "unitId": unitId, "knowledgeId": knowledgeId, "difficulty": difficulty, "righyNum": righyNum, "totalNum": totalNum }
             }).then(function successCallback(response) {
-                $modalInstance.dismiss('cancel');
-                $scope.showAllQuestion();
+                $('#addQuestionData').modal('hide');
+                $modalInstance.close("success");
                 alert("添加成功");
+                $scope.showAllQuestion();       
             }, function errorCallback(response) {
+                $('#addQuestionData').modal('hide');
                 $modalInstance.dismiss('cancel');
                 alert("添加失败，请重试。");
             });
         }
     }
     //下拉框
-    $scope.showCourse = function () {
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+    $scope.showAllUnit = function () {
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/QueryUnit',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.unitInfo = response.data;
         }, function errorCallback(response) {
+            alert("获取数据失败");
         });
     }
-    $scope.showCourse();
-
-    $scope.selectedUnit = function (courseId) {
-        $scope.unitId = "";
-        $scope.knowledgeId = "";
-        if (courseId.id != 0) {
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
-                params: {
-                    'courseId': courseId
-                }
-            }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("错误"); }
-    }
-    $scope.selectedKnowledge = function (unitId, courseId) {
+    $scope.showAllUnit();
+    //$scope.selectedUnit = function (courseId) {
+    //    $scope.unitId = "";
+    //    $scope.knowledgeId = "";
+    //    if (courseId.id != 0) {
+    //        $http({
+    //            method: 'GET',
+    //            url: 'http://localhost:5451/TrainApp/SelectedUnit',
+    //            params: {
+    //                'courseId': courseId
+    //            }
+    //        }).then(function successCallback(response) {
+    //            $scope.unitInfo = response.data;
+    //        }, function errorCallback(response) {
+    //            alert("查询失败");
+    //        });
+    //    }
+    //    else { alert("错误"); }
+    //}
+    $scope.selectedKnowledge = function (unitId) {
         $scope.knowledgeId = "";
         if (unitId.id != 0) {
             $http({
@@ -1967,7 +1813,7 @@ app.controller('addQuestionCtrl', function ($scope, $http, $modalInstance, data)
                 url: 'http://localhost:5451/TrainApp/SelectedKnowledge',
                 params: {
                     'unitId': unitId,
-                    'courseId': courseId
+                    //'courseId': courseId
                 }
             }).then(function successCallback(response) {
                 $scope.knowledgeInfo = response.data;
@@ -1983,70 +1829,81 @@ app.controller('addQuestionCtrl', function ($scope, $http, $modalInstance, data)
 app.controller('statisticCtrl', function ($scope, $http) {
 
     //下拉框
-    $scope.showCourse = function () {
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+    $scope.showUnit = function () {
+        $scope.unitId = "";
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/SelectedUnit',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.unitInfo = response.data;
         }, function errorCallback(response) {
+            alert("查询失败");
         });
     }
-    $scope.showCourse();
-    $scope.selectedUnit = function (courseId) {
-        $scope.unitId = "";
-        if (courseId != undefined) {
+    $scope.showUnit();
+
+    $scope.questionStatistic = function (unitId) {
+        $('#loadstatisticData').modal('show');
+        //console.log(courseId + " " + unitId);
+        if (unitId != "" && unitId != null && unitId != undefined) {
             $http({
                 method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
+                url: 'http://localhost:5451/TrainApp/QuestionStatistic',
                 params: {
-                    'courseId': courseId
+                    //'courseId': courseId,
+                    'unitId': unitId
                 }
             }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
+                $scope.questionInfo = response.data;
+                if ($scope.questionInfo.length > 15) {
+                    $scope.highQuestionInfo = $scope.questionInfo.slice(0, 15);
+                    $scope.lowQuestionInfo = $scope.questionInfo.slice(-15);
+                    //console.log($scope.lowQuestionInfo);
+                }
+                else {
+                    $scope.highQuestionInfo = $scope.questionInfo;
+                    $scope.lowQuestionInfo = $scope.questionInfo;
+                }
+                console.log($scope.questionInfo.slice(0, 1));
+                $('#loadstatisticData').modal('hide');
+                alert("查询成功");
             }, function errorCallback(response) {
+                $('#loadstatisticData').modal('hide');
                 alert("查询失败");
             });
         }
-        else { alert("错误"); }
-    }
-
-
-    $scope.questionStatistic = function (courseId, unitId) {
-        //console.log(courseId + " " + unitId);
-        if (courseId != "" && courseId != null && courseId != undefined) {
-            if(unitId != "" && unitId != null && unitId != undefined){
-                $http({
-                    method: 'GET',
-                    url: 'http://localhost:5451/TrainApp/QuestionStatistic',
-                    params: {
-                        'courseId': courseId,
-                        'unitId': unitId
-                    }
-                }).then(function successCallback(response) {
-                    $scope.questionInfo = response.data;
-                    if ($scope.questionInfo.length > 15) {
-                        $scope.highQuestionInfo = $scope.questionInfo.slice(0,15);
-                        $scope.lowQuestionInfo = $scope.questionInfo.slice(-15);
-                        //console.log($scope.lowQuestionInfo);
-                    }
-                    else {
-                        $scope.highQuestionInfo = $scope.questionInfo;
-                        $scope.lowQuestionInfo = $scope.questionInfo;
-                    }
-                    console.log($scope.questionInfo.slice(0, 1));
-                    alert("查询成功");
-                },function errorCallback(response) {
-                    alert("查询失败");
-                });
-            }
-            else {
-
-                alert("请选择要查询的单元名");
-            }
-        }
-        else{
-            alert("请选择要查询的课程名");
+        else {
+            $http({
+                method: 'GET',
+                url: 'http://localhost:5451/TrainApp/AllUnitQuestionStatistic',
+            }).then(function successCallback(response) {
+                $scope.questionInfo = response.data;
+                if ($scope.questionInfo.length > 15) {
+                    $scope.highQuestionInfo = $scope.questionInfo.slice(0, 15);
+                    $scope.lowQuestionInfo = $scope.questionInfo.slice(-15);
+                    //console.log($scope.lowQuestionInfo);
+                }
+                else {
+                    $scope.highQuestionInfo = $scope.questionInfo;
+                    $scope.lowQuestionInfo = $scope.questionInfo;
+                }
+                console.log($scope.questionInfo.slice(0, 1));
+                $('#loadstatisticData').modal('hide');
+                alert("查询成功");
+            }, function errorCallback(response) {
+                $('#loadstatisticData').modal('hide');
+                alert("查询失败");
+            });
         }
     }
 })
@@ -2064,87 +1921,80 @@ app.controller('studentStatisticCtrl', function ($scope, $http) {
         });
     }
     $scope.showClass();
-    $scope.showCourse = function () {
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+    $scope.showUnit = function () {
+        $scope.unitId = "";
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/SelectedUnit',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.unitInfo = response.data;
         }, function errorCallback(response) {
+            alert("查询失败");
         });
     }
-    $scope.showCourse();
-    $scope.selectedUnit = function (courseId) {
-        $scope.unitId = "";
-        if (courseId != "") {
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
-                params: {
-                    'courseId': courseId
-                }
-            }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("错误"); }
-    }
-    $scope.queryFeedback = function (classId, unitId, courseId) {
+    $scope.showUnit();
+    $scope.queryFeedback = function (classId, unitId) {     
         //console.log(courseId + " " + unitId);
         if (classId != "" && classId != null && classId != undefined) {
-            if (courseId != "" && courseId != null && courseId != undefined) {
-                if (unitId == "" || unitId == null || unitId == undefined) {
-                    $http({
-                        method: 'GET',
-                        url: 'http://localhost:5451/TrainApp/QueryFeedbackOfCourse',
-                        params: {
-                            'classId': classId,
-                            'courseId': courseId
-                        }
-                    }).then(function successCallback(response) {
-                        alert("查询成功");
-                        $scope.feedbackInfo = response.data;
-                        if ($scope.feedbackInfo.length > 5) {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
-                        }
-                        else {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo;
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo;
-                        }
-                    }, function errorCallback(response) {
-                        alert("查询失败");
-                    });
-                }
-                else {
-                    $http({
-                        method: 'GET',
-                        url: 'http://localhost:5451/TrainApp/QueryFeedback',
-                        params: {
-                            'classId': classId,
-                            'unitId': unitId,
-                            'courseId': courseId
-                        }
-                    }).then(function successCallback(response) {
-                        alert("查询成功");
-                        $scope.feedbackInfo = response.data;
-                        if ($scope.feedbackInfo.length > 5) {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
-                        }
-                        else {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo;
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo;
-                        }
-                    }, function errorCallback(response) {
-                        alert("查询失败");
-                    });                    
-                }
+            $('#loadStudentstatisticData').modal('show');
+            if (unitId == "" || unitId == null || unitId == undefined) {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:5451/TrainApp/QueryFeedbackOfCourse',
+                    params: {
+                        'classId': classId,
+                    }
+                }).then(function successCallback(response) {
+                    $('#loadStudentstatisticData').modal('hide');
+                    alert("查询成功");
+                    $scope.feedbackInfo = response.data;
+                    if ($scope.feedbackInfo.length > 5) {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
+                    }
+                    else {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo;
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo;
+                    }
+                }, function errorCallback(response) {
+                    $('#loadStudentstatisticData').modal('hide');
+                    alert("查询失败");
+                });
             }
             else {
-                alert("请选择要查询的课程");
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:5451/TrainApp/QueryFeedback',
+                    params: {
+                        'classId': classId,
+                        'unitId': unitId,
+                    }
+                }).then(function successCallback(response) {
+                    $('#loadStudentstatisticData').modal('hide');
+                    alert("查询成功");
+                    $scope.feedbackInfo = response.data;
+                    if ($scope.feedbackInfo.length > 5) {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
+                    }
+                    else {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo;
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo;
+                    }
+                }, function errorCallback(response) {
+                    $('#loadStudentstatisticData').modal('hide');
+                    alert("查询失败");
+                });
             }
         }
         else {
@@ -2168,91 +2018,86 @@ app.controller('studentNumStatisticCtrl', function ($scope, $http) {
         });
     }
     $scope.showClass();
-    $scope.showCourse = function () {
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+    $scope.showUnit = function () {
+        $scope.unitId = "";
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/SelectedUnit',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.unitInfo = response.data;
         }, function errorCallback(response) {
+            alert("查询失败");
         });
     }
-    $scope.showCourse();
-    $scope.selectedUnit = function (courseId) {
-        $scope.unitId = "";
-        if (courseId != "") {
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
-                params: {
-                    'courseId': courseId
-                }
-            }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("错误"); }
-    }
-    $scope.queryFeedback = function (classId, unitId, courseId) {
+    $scope.queryFeedback = function (classId, unitId) {
         //console.log(courseId + " " + unitId);
         if (classId != "" && classId != null && classId != undefined) {
-            if (courseId != "" && courseId != null && courseId != undefined) {
-                if (unitId == "" || unitId == null || unitId == undefined) {
-                    $http({
-                        method: 'GET',
-                        url: 'http://localhost:5451/TrainApp/QueryNumOfCourse',
-                        params: {
-                            'classId': classId,
-                            'courseId': courseId
-                        }
-                    }).then(function successCallback(response) {
-                        alert("查询成功");
-                        $scope.feedbackInfo = response.data;
-                        if ($scope.feedbackInfo.length > 5) {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
-                        }
-                        else {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo;
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo;
-                        }
-                    }, function errorCallback(response) {
-                        alert("查询失败");
-                    });
-                }
-                else {
-                    $http({
-                        method: 'GET',
-                        url: 'http://localhost:5451/TrainApp/QueryNum',
-                        params: {
-                            'classId': classId,
-                            'unitId': unitId,
-                            'courseId': courseId
-                        }
-                    }).then(function successCallback(response) {
-                        alert("查询成功");
-                        $scope.feedbackInfo = response.data;
-                        if ($scope.feedbackInfo.length > 5) {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
-                        }
-                        else {
-                            $scope.highFeedbackInfo = $scope.feedbackInfo;
-                            $scope.lowFeedbackInfo = $scope.feedbackInfo;
-                        }
-                    }, function errorCallback(response) {
-                        alert("查询失败");
-                    });
-                }
+            $('#loadStudentNumstatisticData').modal('show');
+            if (unitId == "" || unitId == null || unitId == undefined) {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:5451/TrainApp/QueryNumOfCourse',
+                    params: {
+                        'classId': classId,
+                        //'courseId': courseId
+                    }
+                }).then(function successCallback(response) {
+                    $('#loadStudentNumstatisticData').modal('hide');
+                    alert("查询成功");
+                    $scope.feedbackInfo = response.data;
+                    if ($scope.feedbackInfo.length > 5) {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
+                    }
+                    else {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo;
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo;
+                    }
+                }, function errorCallback(response) {
+                    $('#loadStudentNumstatisticData').modal('hide');
+                    alert("查询失败");
+                });
             }
             else {
-                alert("请选择要查询的课程");
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:5451/TrainApp/QueryNum',
+                    params: {
+                        'classId': classId,
+                        'unitId': unitId,
+                        //'courseId': courseId
+                    }
+                }).then(function successCallback(response) {
+                    $('#loadStudentNumstatisticData').modal('hide');
+                    alert("查询成功");
+                    $scope.feedbackInfo = response.data;
+                    if ($scope.feedbackInfo.length > 5) {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo.slice(0, 5);
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo.slice(-5);
+                    }
+                    else {
+                        $scope.highFeedbackInfo = $scope.feedbackInfo;
+                        $scope.lowFeedbackInfo = $scope.feedbackInfo;
+                    }
+                }, function errorCallback(response) {
+                    $('#loadStudentNumstatisticData').modal('hide');
+                    alert("查询失败");
+                });
             }
         }
         else {
             alert("请选择要查询的班级");
+            $('#loadStudentNumstatisticData').modal('hide');
         }
     }
 
@@ -2266,36 +2111,33 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
         $rootScope.$broadcast("ShareClassesEvent", obj);
     };
 
-    //下拉框
-    $scope.showCourse = function () {
+    ////下拉框
+    //$scope.showCourse = function () {
+    //    $http({
+    //        method: 'GET',
+    //        url: 'http://localhost:5451/TrainApp/ShowCourse'
+    //    }).then(function successCallback(response) {
+    //        $scope.courseInfo = response.data;
+    //    }, function errorCallback(response) {
+    //    });
+    //}
+    //$scope.showCourse();
+    //查询试卷信息
+    $scope.showExamination = function () {
+        $('#loadExaminationData').modal('show');
         $http({
             method: 'GET',
-            url: 'http://localhost:5451/TrainApp/ShowCourse'
+            url: 'http://localhost:5451/TrainApp/ShowExamination',
         }).then(function successCallback(response) {
-            $scope.courseInfo = response.data;
+            $scope.examinationInfo = response.data;
+            $('#loadExaminationData').modal('hide');
+            //alert("查询成功");
         }, function errorCallback(response) {
+            $('#loadExaminationData').modal('hide');
+            //alert("查询失败");
         });
     }
-    $scope.showCourse();
-    //查询试卷信息
-    $scope.queryExamination = function (courseId) {
-        if (courseId != "") {
-            $scope.coursesId = courseId;
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/QueryExamination',
-                params: {
-                    'courseId': courseId
-                }
-            }).then(function successCallback(response) {
-                $scope.examinationInfo = response.data;
-                alert("查询成功");
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("请选择课程名称"); }
-    }
+    $scope.showExamination();
     $scope.allChecked = false;
 
     $scope.chooseAll = function () {
@@ -2304,24 +2146,24 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
             $scope.examinationInfo[i].checked = event.target.checked;
         }
     };
-    //刷新
-    $scope.queryExaminations = function (courseId) {
-        if (courseId != "") {
-            $scope.coursesId = courseId;
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/QueryExamination',
-                params: {
-                    'courseId': courseId
-                }
-            }).then(function successCallback(response) {
-                $scope.examinationInfo = response.data;
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("请选择课程名称"); }
-    }
+    ////刷新
+    //$scope.queryExaminations = function (courseId) {
+    //    if (courseId != "") {
+    //        $scope.coursesId = courseId;
+    //        $http({
+    //            method: 'GET',
+    //            url: 'http://localhost:5451/TrainApp/QueryExamination',
+    //            params: {
+    //                'courseId': courseId
+    //            }
+    //        }).then(function successCallback(response) {
+    //            $scope.examinationInfo = response.data;
+    //        }, function errorCallback(response) {
+    //            alert("查询失败");
+    //        });
+    //    }
+    //    else { alert("请选择课程名称"); }
+    //}
     $scope.chooseExamination = function (index) {
         for (i in $scope.examinationInfo) {
             if (!$scope.examinationInfo[i].checked) {
@@ -2339,6 +2181,7 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
             if (confirm("删除所有试卷？")) {
                 for (i in $scope.examinationInfo) {
                     a++;
+                    $('#deleteExaminationData').modal('show');
                     $scope.delete($scope.examinationInfo[i].id);
                 }
             }
@@ -2347,9 +2190,13 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
                 for (i in $scope.examinationInfo) {
                     if ($scope.examinationInfo[i].checked) {
                         a++;
+                        $('#deleteExaminationData').modal('show');
                         $scope.delete($scope.examinationInfo[i].id);
                     }
                 }
+            }
+            if (a == 0) {
+                alert("请先选择想要删除的试卷。");
             }
         }
     }
@@ -2365,14 +2212,20 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
         }).then(function successCallback(response) {
             count++;
             if (count == a) {
-                $scope.queryExaminations($scope.coursesId);
+                $('#deleteExaminationData').modal('hide');
+                a = 0;
+                count = 0;
+                $scope.showExamination();
                 alert("删除成功");
             }
         }, function errorCallback(response) {
+            $('#deleteExaminationData').modal('hide');
             alert("试卷编号为" + id + "的试卷删除失败");
             count++;
             if (count == a) {
-                $scope.queryExaminations($scope.coursesId);
+                a = 0;
+                count = 0;
+                $scope.showExamination();
             }
         });
     }
@@ -2381,7 +2234,6 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
     $scope.examinatinDetails = function ($index) {
         if ($index >= 0) {
             var id = $scope.examinationInfo[$index].id;
-            //$rootScope.examId = id;
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/ExaminationDetails',
@@ -2393,46 +2245,48 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
                 $scope.examName = $scope.examinationsInfo[0].name;
                 $rootScope.examId = $scope.examinationsInfo[0].id;
                 $scope.examQuestionList = $scope.examinationsInfo[0].questionList;
-                $scope.examCourseId = $scope.examinationsInfo[0].courseId;
+                //$scope.examCourseId = $scope.examinationsInfo[0].courseId;
                 localStorage.clear();
                 localStorage.setItem("examName", $scope.examName);
                 localStorage.setItem('examId', $rootScope.examId);
                 localStorage.setItem("examQuestionList", $scope.examQuestionList);
-                localStorage.setItem("examCourseId", $scope.examCourseId);
+                //localStorage.setItem("examCourseId", $scope.examCourseId);
                 window.location = "ExaminationView/examinationDetail.html";
                
             }, function errorCallback(response) {
 
                 alert("失败");
             });
-        }
-     
+        }     
     }
     $scope.examName = localStorage.getItem("examName");
     $rootScope.examId = localStorage.getItem("examId");
     $scope.examQuestionList = localStorage.getItem("examQuestionList");
-    $scope.examCourseId = localStorage.getItem("examCourseId");
+    //$scope.examCourseId = localStorage.getItem("examCourseId");
 
-    $scope.showDetails = function (examQuestionList,examCourseId) {
+    $scope.showDetails = function (examQuestionList) {      
         if (examQuestionList != "") {
+            $('#loadExamDetailData').modal('show');
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/ShowDetails',
                 params: {
                     'examQuestionList': examQuestionList,
-                    'examCourseId': examCourseId
+                    //'examCourseId': examCourseId
                 }
             }).then(function successCallback(response) {
                 $scope.examQuestionsInfo = response.data;
+                $('#loadExamDetailData').modal('hide');
             }, function errorCallback(response) {
+                $('#loadExamDetailData').modal('hide');
                 alert("失败");
             });
         }
 
     }
 
-    if ($scope.examQuestionList != null && $scope.examCourseId != null) {
-        $scope.showDetails($scope.examQuestionList, $scope.examCourseId);
+    if ($scope.examQuestionList != null) {
+        $scope.showDetails($scope.examQuestionList);
     }
     
 
@@ -2452,7 +2306,7 @@ app.controller('examinationCtrl', function ($rootScope, $scope, $http, $modal) {
                 }
             })
             modalInstance.result.then(function (result) {
-                $scope.showDetails(result, $scope.examCourseId);
+                $scope.showDetails(result);
             })
         }
     }
@@ -2471,7 +2325,7 @@ app.controller('updateExamQuestionCtrl', function ($scope, $http, $modalInstance
     $scope.currentExamId = parseInt($scope.examId);
     $scope.currentExamQuestion = data;
     $scope.currentQuestionId = data[0].id;
-    $scope.currentQuesCourseId = data[0].courseId;
+    //$scope.currentQuesCourseId = data[0].courseId;
     $scope.currentQuesUnitId = data[0].unitId;
     $scope.currentQuesDifficulty = data[0].difficulty;
     $scope.currentQuesKnowledgeId = data[0].knowledgeId;
@@ -2512,6 +2366,7 @@ app.controller('updateExamQuestionCtrl', function ($scope, $http, $modalInstance
             alert("题目名称不能为空哦！");
         }
         else {
+            $('#updataExamDetailData').modal('show');
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/UpdateExam',
@@ -2522,43 +2377,38 @@ app.controller('updateExamQuestionCtrl', function ($scope, $http, $modalInstance
                 }
             }).then(function successCallback(response) {
                 console.log(response.data);
+                $('#updataExamDetailData').modal('hide');
                 alert("题目修改成功！");
                 $modalInstance.close(response.data);
             }, function errorCallback(response) {
+                $('#updataExamDetailData').modal('hide');
                 alert("题目修改失败！");
             });
         }
     }
 
-    $scope.showUnit = function (currentQuesCourseId) {
-        $scope.unitId = "";
-        //$scope.knowledgeId = "";
-        if (currentQuesCourseId != 0) {
-            $http({
-                method: 'GET',
-                url: 'http://localhost:5451/TrainApp/SelectedUnit',
-                params: {
-                    'courseId': currentQuesCourseId
-                }
-            }).then(function successCallback(response) {
-                $scope.unitInfo = response.data;
-            }, function errorCallback(response) {
-                alert("查询失败");
-            });
-        }
-        else { alert("错误"); }
+    $scope.showUnit = function () {
+        $scope.unitId = 0;
+        $scope.knowledgeId = 0;
+        $http({
+            method: 'GET',
+            url: 'http://localhost:5451/TrainApp/SelectedUnit',
+        }).then(function successCallback(response) {
+            $scope.unitInfo = response.data;
+        }, function errorCallback(response) {
+            alert("查询失败");
+        });
     }
-    $scope.showUnit($scope.currentQuesCourseId);
+    $scope.showUnit();
 
-    $scope.selectedKnowledge = function (currentQuesCourseId , unitId) {
-        $scope.knowledgeId = "";
+    $scope.selectedKnowledge = function (unitId) {
+        $scope.knowledgeId = 0;
         if (unitId.id != 0) {
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/SelectedKnowledge',
                 params: {
-                    'unitId': unitId,
-                    'courseId': currentQuesCourseId
+                    'unitId': unitId
                 }
             }).then(function successCallback(response) {
                 $scope.knowledgeInfo = response.data;
@@ -2568,34 +2418,8 @@ app.controller('updateExamQuestionCtrl', function ($scope, $http, $modalInstance
         }
         else { alert("错误"); }
     }
-
-    $scope.begin = function (id, num, diff) {
-        if (id == undefined || id == "" || num == undefined || num == "" || diff == undefined || diff == "") {
-            alert("请填写完整的组卷要求");
-            return;
-        }
-        $('#loadingPaper').modal('show');
-        var totalNum = parseInt(num);
-        var difficulty = parseFloat(diff);
-        $http({
-            method: 'POST',
-            url: 'http://localhost:5451/TrainApp/RandomPaper',
-            data: {
-                "courseId": id,
-                "totalNum": totalNum,
-                "difficulty": difficulty
-            }
-        }).then(function successCallback(response) {
-            $scope.result = response.data;
-            $('#loadingPaper').modal('hide');
-            alert("组卷成功");
-            console.log($scope.result);
-        }, function errorCallback(response) {
-            alert("失败");
-        });
-    }
-    $scope.selectedQuestion = function (currentQuesCourseId, unitId, knowledgeId, currentQuesDifficulty) {
-        $scope.questionId = "";
+    $scope.selectedQuestion = function (unitId, knowledgeId, currentQuesDifficulty) {
+        $scope.questionId = 0;
         if (knowledgeId.id != 0) {
             $http({
                 method: 'GET',
@@ -2603,7 +2427,6 @@ app.controller('updateExamQuestionCtrl', function ($scope, $http, $modalInstance
                 params: {
                     'unitId': unitId,
                     'knowledgeId': knowledgeId,
-                    'courseId': currentQuesCourseId,
                     'difficulty': currentQuesDifficulty
                 }
             }).then(function successCallback(response) {

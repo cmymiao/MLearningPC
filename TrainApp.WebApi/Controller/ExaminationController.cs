@@ -17,10 +17,13 @@ namespace TrainApp.WebApi
         public List<Examination> examinationList = new List<Examination>();
         public List<Examination_View> eList = new List<Examination_View>();
 
-        [Route("QueryExamination")]
+        [Route("ShowExamination")]
         [HttpGet]                       //定义访问方式（Post或Get方法）
-        public object Get(int courseId)             //返回数据的函数，如果是Get方法则方法名为Get开头，若是Post则使用Post开头。
+        public object Get()             //返回数据的函数，如果是Get方法则方法名为Get开头，若是Post则使用Post开头。
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("courseId", courseId);

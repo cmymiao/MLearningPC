@@ -7,15 +7,20 @@
 </head>
 <body ng-controller="examinationCtrl">
     <div class="container-fluid">
-        <div id="loadData" class="modal fade" data-keyboard="false"
+        <div id="loadExaminationData" class="modal fade" data-keyboard="false"
              data-backdrop="static" data-role="dialog"
              aria-labelledby="myModalLabel" aria-hidden="true">
             <div id="loading" class="loading">加载中。。。</div>
         </div>
-        <div class="row text-center" style="margin-top:20px">
-            <h2>查询习题</h2>
+        <div id="deleteExaminationData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">删除中。。。</div>
         </div>
-        <div class="row" style="margin-top:20px;background:#b5d5ff">
+        <div class="row text-center" style="margin-top:20px">
+            <h2>试卷信息</h2>
+        </div>
+        <!--<div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">查询条件</h4>
         </div>
         <div class="row" style="margin-top:10px">
@@ -31,11 +36,11 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </div>-->
 
-        <div class="row" style="margin-top:10px;background:#b5d5ff">
+        <!--<div class="row" style="margin-top:10px;background:#b5d5ff">
             <h4 style="margin-left:20px">试卷信息</h4>
-        </div>
+        </div>-->
         <div class="row text-right" style="margin-top:10px;margin-right:50px">
             <button class="btn btn-danger" ng-click="deleteExamination()">删除</button>
         </div>
