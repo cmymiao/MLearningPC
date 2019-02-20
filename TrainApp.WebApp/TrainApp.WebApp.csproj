@@ -109,7 +109,7 @@
     <Content Include="View\courseList.html" />
     <Content Include="View\QuestionView\queryQuestion.html" />
     <Content Include="View\QuestionView\questionHomePage.html" />
-    <Content Include="View\QuestionView\questionInfo.html" />
+    <Content Include="View\QuestionView\uploadQuestionFile.html" />
     <Content Include="View\ResourceView\resourceHomePage.html" />
     <Content Include="View\StatisticView\questionStatistic.html" />
     <Content Include="View\StatisticView\statisticHomePage.html" />

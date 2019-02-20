@@ -59,12 +59,15 @@ namespace TrainApp.WebApi
         //学生答题情况统计
         [Route("QueryFeedback")]
         [HttpGet]
-        public object GetQueryFeedback(String classId, int unitId, int courseId)
+        public object GetQueryFeedback(String classId, int unitId)
         {
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("classId", classId);
             var query1 = new BmobQuery();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query1.WhereEqualTo("courseId", courseId);
             var query2 = new BmobQuery();
             query2.WhereEqualTo("unitId", unitId);
@@ -101,12 +104,15 @@ namespace TrainApp.WebApi
 
         [Route("QueryFeedbackOfCourse")]
         [HttpGet]
-        public object GetQueryFeedbackOfCourse(String classId, int courseId)
+        public object GetQueryFeedbackOfCourse(String classId)
         {
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("classId", classId);
             var query1 = new BmobQuery();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query1.WhereEqualTo("courseId", courseId);
             query = query.And(query1);
             //query.OrderByDescending("rightNum");
@@ -141,12 +147,15 @@ namespace TrainApp.WebApi
         //学生答题数量统计
         [Route("QueryNum")]
         [HttpGet]
-        public object GetQueryNum(String classId, int unitId, int courseId)
+        public object GetQueryNum(String classId, int unitId)
         {
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("classId", classId);
             var query1 = new BmobQuery();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query1.WhereEqualTo("courseId", courseId);
             var query2 = new BmobQuery();
             query2.WhereEqualTo("unitId", unitId);
@@ -179,12 +188,15 @@ namespace TrainApp.WebApi
 
         [Route("QueryNumOfCourse")]
         [HttpGet]
-        public object GetQueryNumOfCourse(String classId, int courseId)
+        public object GetQueryNumOfCourse(String classId)
         {
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("classId", classId);
             var query1 = new BmobQuery();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query1.WhereEqualTo("courseId", courseId);
             query = query.And(query1);
             query.OrderByDescending("totalNum");

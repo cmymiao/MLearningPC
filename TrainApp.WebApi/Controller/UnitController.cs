@@ -81,10 +81,14 @@ namespace TrainApp.WebApi
 
         }
 
+        //试卷题目修改模态框
         [Route("SelectedUnit")]
         [HttpGet]
-        public object GetSelectedUnit(int courseId)
+        public object GetSelectedUnit()
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.WhereEqualTo("courseId", courseId);
             var future = Bmob.FindTaskAsync<Unit>("Unit", query);

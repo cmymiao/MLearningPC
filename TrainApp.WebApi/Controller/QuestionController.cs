@@ -31,51 +31,35 @@ namespace TrainApp.WebApi
 
         public void QuestionInfo()              //查询全部题目的函数
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
-            String username = cookie["username"].ToString();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
-            query.WhereEqualTo("tId", username);
-            var future1 = Bmob.FindTaskAsync<Course>("Course", query);
+            query.WhereEqualTo("courseId", courseId);
+            query.OrderBy("id");
+            var future = Bmob.FindTaskAsync<Question>("Question", query); 
             try
             {
-                int count = future1.Result.results.Count;
-                int[] courses = new int[count];
-                for (int i = 0; i < count; i++)
+                questionList = future.Result.results;
+                foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
                 {
-                    courses[i] = future1.Result.results[i].id.Get();
-                }
-                var query1 = new BmobQuery();
-                query1.Limit(300);
-                query1.WhereContainedIn("courseId", courses);
-                var future = Bmob.FindTaskAsync<Question>("Question", query1);
-                try
-                {
-                    questionList = future.Result.results;
-                    foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
-                    {
-                        Question_View question_view = new Question_View();
-                        question_view.objectId = q.objectId;
-                        question_view.id = q.id.Get();
-                        question_view.difficulty = q.difficulty.Get();
-                        question_view.totalNum = q.totalNum.Get();
-                        question_view.rightNum = q.rightNum.Get();
-                        question_view.question = q.question;
-                        question_view.a = q.a;
-                        question_view.b = q.b;
-                        question_view.c = q.c;
-                        question_view.d = q.d;
-                        question_view.answer = q.answer;
-                        question_view.analysis = q.analysis;
-                        question_view.courseId = q.courseId.Get();
-                        question_view.unitId = q.unitId.Get();
-                        question_view.knowledgeId = q.knowledgeId;
-                        qList.Add(question_view);
-                    }
-
-                }
-                catch
-                {
-
+                    Question_View question_view = new Question_View();
+                    question_view.objectId = q.objectId;
+                    question_view.id = q.id.Get();
+                    question_view.difficulty = q.difficulty.Get();
+                    question_view.totalNum = q.totalNum.Get();
+                    question_view.rightNum = q.rightNum.Get();
+                    question_view.question = q.question;
+                    question_view.a = q.a;
+                    question_view.b = q.b;
+                    question_view.c = q.c;
+                    question_view.d = q.d;
+                    question_view.answer = q.answer;
+                    question_view.analysis = q.analysis;
+                    question_view.courseId = q.courseId.Get();
+                    question_view.unitId = q.unitId.Get();
+                    question_view.knowledgeId = q.knowledgeId;
+                    qList.Add(question_view);
                 }
             }
             catch { }
@@ -112,7 +96,10 @@ namespace TrainApp.WebApi
             question.a = questionInfo.a;
             question.answer = questionInfo.answer;
             question.analysis = questionInfo.analysis;
-            question.courseId = questionInfo.courseId;
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
+            question.courseId = courseId;
             question.unitId = questionInfo.unitId;
             question.knowledgeId = questionInfo.knowledgeId;
             question.difficulty = questionInfo.difficulty;
@@ -202,42 +189,45 @@ namespace TrainApp.WebApi
             return a;
         }
 
-        [Route("QueryCourseQuestion")]
-        [HttpGet]
-        public object GetQueryCourseQuestion(int courseId)
-        {
-            var query = new BmobQuery();
-            query.Limit(300);
-            query.WhereEqualTo("courseId", courseId);
-            var future = Bmob.FindTaskAsync<Question>("Question", query);
-            questionList = future.Result.results;
-            foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
-            {
-                Question_View question_view = new Question_View();
-                question_view.id = q.id.Get();
-                question_view.difficulty = q.difficulty.Get();
-                question_view.totalNum = q.totalNum.Get();
-                question_view.rightNum = q.rightNum.Get();
-                question_view.question = q.question;
-                question_view.a = q.a;
-                question_view.b = q.b;
-                question_view.c = q.c;
-                question_view.d = q.d;
-                question_view.answer = q.answer;
-                question_view.analysis = q.analysis;
-                question_view.courseId = q.courseId.Get();
-                question_view.unitId = q.unitId.Get();
-                question_view.knowledgeId = q.knowledgeId;
-                qList.Add(question_view);
+        //[Route("QueryCourseQuestion")]
+        //[HttpGet]
+        //public object GetQueryCourseQuestion(int courseId)
+        //{
+        //    var query = new BmobQuery();
+        //    query.Limit(300);
+        //    query.WhereEqualTo("courseId", courseId);
+        //    var future = Bmob.FindTaskAsync<Question>("Question", query);
+        //    questionList = future.Result.results;
+        //    foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+        //    {
+        //        Question_View question_view = new Question_View();
+        //        question_view.id = q.id.Get();
+        //        question_view.difficulty = q.difficulty.Get();
+        //        question_view.totalNum = q.totalNum.Get();
+        //        question_view.rightNum = q.rightNum.Get();
+        //        question_view.question = q.question;
+        //        question_view.a = q.a;
+        //        question_view.b = q.b;
+        //        question_view.c = q.c;
+        //        question_view.d = q.d;
+        //        question_view.answer = q.answer;
+        //        question_view.analysis = q.analysis;
+        //        question_view.courseId = q.courseId.Get();
+        //        question_view.unitId = q.unitId.Get();
+        //        question_view.knowledgeId = q.knowledgeId;
+        //        qList.Add(question_view);
 
-            }
-            return ResultToJson.toJson(qList);
+        //    }
+        //    return ResultToJson.toJson(qList);
 
-        }
+        //}
         [Route("QueryUnitQuestion")]
         [HttpGet]
-        public object GetQueryUnitQuestion(int courseId, int unitId)
+        public object GetQueryUnitQuestion(int unitId)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             var query = new BmobQuery();
             query.Limit(300);
             query.WhereEqualTo("courseId", courseId);
@@ -327,14 +317,57 @@ namespace TrainApp.WebApi
 
         }
 
+        //全部单元题目答题情况统计
+        [Route("AllUnitQuestionStatistic")]
+        [HttpGet]
+        public object GetQuestionStatistic()
+        {
+            var query = new BmobQuery();
+            query.Limit(300);
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
+            query.WhereEqualTo("courseId", courseId);
+            //query.OrderByDescending("rightNum");
+            var future = Bmob.FindTaskAsync<Question>("Question", query);
+            try
+            {
+                questionList = future.Result.results;
+                foreach (var q in questionList)     //由于BmobModel中有BmobInt类型不能直接显示到页面中，所以需要对字段的类型进行处理，变为相对应的ViewModel格式。
+                {
+                    Question_View question_view = new Question_View();
+                    question_view.id = q.id.Get();
+                    question_view.question = q.question;
+                    question_view.totalNum = q.totalNum.Get();
+                    question_view.rightNum = q.rightNum.Get();
+
+                    if (question_view.totalNum != 0)
+                    {
+                        question_view.accuracy = 100 * question_view.rightNum / question_view.totalNum;
+                    }
+                    qList.Add(question_view);
+                }
+
+                questionSortList = qList.OrderByDescending(s => s.accuracy).ToList();
+
+                return ResultToJson.toJson(questionSortList);
+            }
+            catch
+            {
+                return "获取失败";
+            }
+        }
 
         //单元题目答题情况统计
         [Route("QuestionStatistic")]
         [HttpGet]
-        public object GetQuestionStatistic(int courseId, int unitId)
+        public object GetQuestionStatistic(int unitId)
         {
             var query = new BmobQuery();
             query.Limit(300);
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             query.WhereEqualTo("courseId", courseId);
             var query1 = new BmobQuery();
             query1.WhereEqualTo("unitId", unitId);
@@ -372,7 +405,7 @@ namespace TrainApp.WebApi
         //查看试卷详情
         [Route("ShowDetails")]
         [HttpGet]
-        public object GetShowDetails(String examQuestionList,int examCourseId)
+        public object GetShowDetails(String examQuestionList)
         {
             string[] results = examQuestionList.Split(new[] { ';' });
             int[] examQuestion = Array.ConvertAll<string, int>(results, s => int.Parse(s));
@@ -381,8 +414,11 @@ namespace TrainApp.WebApi
             {
                 var query = new BmobQuery();
                 query.WhereEqualTo("id", examQuestion[i]);
+                HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+                String Id = cookie1["CourseId"];
+                int courseId = int.Parse(Id);
                 var query2 = new BmobQuery();
-                query2.WhereEqualTo("courseId", examCourseId);
+                query2.WhereEqualTo("courseId", courseId);
                 query = query.And(query2);
                 query.OrderBy("id");
                 var future = Bmob.FindTaskAsync<Question>("Question", query);
@@ -410,13 +446,15 @@ namespace TrainApp.WebApi
         }
 
         //试卷题目修改
-
         [Route("SelectedQuestion")]
         [HttpGet]
-        public object GetSelectedQuestion(int courseId, int unitId,String knowledgeId,int difficulty)
+        public object GetSelectedQuestion(int unitId,String knowledgeId,int difficulty)
         {
             var query = new BmobQuery();
             query.Limit(300);
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query.WhereEqualTo("courseId", courseId);
             var query1 = new BmobQuery();
             query1.WhereEqualTo("unitId", unitId);

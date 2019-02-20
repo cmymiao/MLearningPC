@@ -5,6 +5,9 @@
     <title></title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../CSS/common/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../CSS/myCSS/myCss.css" />
+    <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../../CSS/myCSS/style.css" />
     <script src="../../JavaScript/common/angular.min.js"></script>
     <script src="../../JavaScript/common/jquery.min.js"></script>
     <script src="../../JavaScript/common/bootstrap.min.js"></script>
@@ -14,6 +17,11 @@
 </head>
 <body ng-app="myApp" ng-controller="examinationCtrl">
     <div class="container-fluid"> 
+        <div id="loadExamDetailData" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
         <div class="row text-center" style="margin-top:20px">
             <h2>{{examName}}</h2>
         </div>
@@ -23,7 +31,7 @@
         <!--<div class="row" style="margin-top:20px;background:#b5d5ff">
             <h4 style="margin-left:20px">试卷详情</h4>
         </div>-->
-        <div class="row" style="margin-top:10px; height:500px; overflow-x:auto;">
+        <div class="row" style="margin-top:10px; overflow-x:auto;">
             <table class="table table-hover" style="text-align:center; table-layout:fixed; word-break:break-all;">
                 <thead>
                     <tr class="text-center" style="background:#b5d5ff">
@@ -51,6 +59,11 @@
 
     <script type="text/ng-template" id="updatExamQuestion.html">
         <div>
+            <div id="updataExamDetailData" class="modal fade" data-keyboard="false"
+                 data-backdrop="static" data-role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="loading" class="loading">修改中。。。</div>
+            </div>
             <div class="modal-header">
                 <h4 class="modal-title" id="title">请修改试卷的题目</h4>
             </div>
@@ -60,7 +73,7 @@
                         <label class="col-sm-4 control-label">此题目所属课程单元号为{{currentQuesUnitId}}</label>
                         <!--<h5 class="col-sm-4" style="margin-left:6px; font-weight:bold;">此题目所属课程单元为{{currentQuestionUnitId}}</h5>-->
                         <div class="col-sm-6">
-                            <select ng-model="unitId" ng-options="unit.id as unit.name for unit in unitInfo" ng-change="selectedKnowledge({{currentQuesCourseId}},unitId)">
+                            <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in unitInfo" ng-change="selectedKnowledge(unitId)">
                                 <option value="">---请选择所属课程单元---</option>
                             </select>
                         </div>
@@ -68,15 +81,15 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">此题目涉及知识点编号为{{currentQuesKnowledgeId}}</label>
                         <div class="col-sm-6">
-                            <select ng-model="knowledgeId" ng-options="knowledge.id as knowledge.name for knowledge in knowledgeInfo" ng-change="selectedQuestion({{currentQuesCourseId}},unitId,knowledgeId,{{currentQuesDifficulty}})">
-                                <option value="">---请选择所属课程单元---</option>
+                            <select ng-model="knowledgeId" class="form-control" ng-options="knowledge.id as knowledge.name for knowledge in knowledgeInfo" ng-change="selectedQuestion(unitId,knowledgeId,{{currentQuesDifficulty}})">
+                                <option value="">---请选择涉及知识点---</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <!--<label class="col-sm-4 control-label">此题目难度系数为{{currentQuesDifficulty}}</label>-->
-                        <div class="col-sm-6">
-                            <select ng-model="questionId" ng-options="question.id as question.question for question in questionInfo">
+                        <div class="col-sm-10">
+                            <select ng-model="questionId" class="form-control" ng-options="question.id as question.question for question in questionInfo">
                                 <option value="">----------请在以下题目中进行选择----------</option>
                             </select>
                         </div>
