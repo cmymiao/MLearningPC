@@ -17,7 +17,10 @@ namespace TrainApp.WebApi.Controller
 
         [Route("ShowResource")]
         [HttpGet]
-        public object GetResourceInfo(int courseId, int unitId, int knowledgeId) {
+        public object GetResourceInfo(int unitId, int knowledgeId) {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             var query = new BmobQuery();
             query.WhereEqualTo("courseId", courseId);
             if(unitId != 0)
@@ -78,13 +81,16 @@ namespace TrainApp.WebApi.Controller
         [HttpPost]
         public object PostFile([FromBody]Resource_View resourceView)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
             String a = "";
            // String objectId = "";
             Resource resource = new Resource();
             resource.id = BmobInput.Parse<BmobInt>(resourceView.id);
             resource.file = resourceView.file;
             resource.type = resourceView.type;
-            resource.courseId = BmobInput.Parse<BmobInt>(resourceView.courseId);
+            resource.courseId = BmobInput.Parse<BmobInt>(courseId);
             resource.unitId = BmobInput.Parse<BmobInt>(resourceView.unitId);
             resource.knowledgeId = BmobInput.Parse<BmobInt>(resourceView.knowledgeId);
             //var query = new BmobQuery();

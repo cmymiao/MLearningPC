@@ -9,5 +9,12 @@
 .login_window{
     margin-top:100px;
 }
+.logo{
+    background:url(../../image/logo.png) no-repeat right;
+    background-size:contain;
+    padding:50px;
+    text-decoration-color:white;
+    font-family:Microsoft YaHei;
+}
 
 

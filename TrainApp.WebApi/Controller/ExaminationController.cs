@@ -212,11 +212,14 @@ namespace TrainApp.WebApi
 
         public List<Question_View> selectQuestion(Requirement require, Double diff, int num)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             List<Question> questionList = new List<Question>();
             List<Question_View> qList = new List<Question_View>();
             //List<Question_View> resultList = new List<Question_View>();
             var query = new BmobQuery();
-            query.WhereEqualTo("courseId", require.courseId);
+            query.WhereEqualTo("courseId", courseId);
             var q1 = new BmobQuery();
             q1.WhereEqualTo("difficulty", diff);
             query.And(q1);
@@ -260,16 +263,16 @@ namespace TrainApp.WebApi
                     q = questionList[id];
                     Question_View question_view = new Question_View();
                     question_view.id = q.id.Get();
-                    question_view.question = q.question;
-                    question_view.a = q.a;
-                    question_view.b = q.b;
-                    question_view.c = q.c;
-                    question_view.d = q.d;
-                    question_view.answer = q.answer;
-                    question_view.analysis = q.analysis;
-                    question_view.difficulty = q.difficulty.Get();
-                    question_view.unitId = q.unitId.Get();
-                    question_view.knowledgeId = q.knowledgeId;
+                    //question_view.question = q.question;
+                    //question_view.a = q.a;
+                    //question_view.b = q.b;
+                    //question_view.c = q.c;
+                    //question_view.d = q.d;
+                    //question_view.answer = q.answer;
+                    //question_view.analysis = q.analysis;
+                    //question_view.difficulty = q.difficulty.Get();
+                    //question_view.unitId = q.unitId.Get();
+                    //question_view.knowledgeId = q.knowledgeId;
                     qList.Add(question_view);
                 }
             }
@@ -280,6 +283,31 @@ namespace TrainApp.WebApi
             return qList;
         }
 
+        [Route("SavePaper")]
+        [HttpPost]
+        public object PostSavePaper([FromBody]Examination_View examination_View)
+        {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String id = cookie1["CourseId"];
+            int courseId = int.Parse(id);
+            Examination examination = new Examination();
+            examination.id = BmobInput.Parse <BmobInt> (examination_View.id);
+            examination.name = examination_View.name;
+            examination.questionList = examination_View.questionList;
+            examination.difficulty = BmobInput.Parse<BmobDouble>(examination_View.difficulty);
+            examination.courseId = BmobInput.Parse<BmobInt>(courseId);
+            var future = Bmob.CreateTaskAsync("Examination", examination);
+            try
+            {
+                String objectId = future.Result.objectId;
+                return objectId;
+            }
+            catch
+            {
+                return "获取失败";
+            }
+
+        }
 
     }
 }

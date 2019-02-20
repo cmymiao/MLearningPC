@@ -74,7 +74,7 @@
     <Content Include="CSS\myCSS\myCss.css" />
     <Content Include="CSS\myCSS\style.css" />
     <Content Include="image\loading.gif" />
-    <Content Include="image\top.png" />
+    <Content Include="image\logo.png" />
     <Content Include="image\topbar_bg.png" />
     <Content Include="JavaScript\common\angular.min.js" />
     <Content Include="JavaScript\common\Bmob-1.6.3.min.js" />
@@ -82,6 +82,7 @@
     <Content Include="JavaScript\common\jquery.min.js" />
     <Content Include="JavaScript\common\ui-bootstrap-tpls.min.js" />
     <Content Include="JavaScript\myJS\homeJs.js" />
+    <Content Include="JavaScript\myJS\JavaScript.js" />
     <Content Include="JavaScript\myJS\loginJs.js" />
     <Content Include="JavaScript\common\xlsx.core.min.js" />
     <Content Include="packages.config" />
@@ -98,7 +99,6 @@
     <Content Include="View\ClassView\classInfo.html" />
     <Content Include="View\ClassView\studentInfo.html" />
     <Content Include="View\CourseView\courseHomePage.html" />
-    <Content Include="View\CourseView\courseInfo.html" />
     <Content Include="View\ExaminationView\compositionPaper.html" />
     <Content Include="View\ExaminationView\examinationDetail.html" />
     <Content Include="View\ExaminationView\examinationHomePage.html" />
@@ -111,7 +111,6 @@
     <Content Include="View\QuestionView\questionHomePage.html" />
     <Content Include="View\QuestionView\questionInfo.html" />
     <Content Include="View\ResourceView\resourceHomePage.html" />
-    <Content Include="View\ResourceView\resourceInfo.html" />
     <Content Include="View\StatisticView\questionStatistic.html" />
     <Content Include="View\StatisticView\statisticHomePage.html" />
     <Content Include="View\StatisticView\studentNumStatistic.html" />

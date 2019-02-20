@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="row tab-content">
-            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="background:#0094ff;height:200px;margin-top:20px" ng-click="chooseCourse(course.id)">
+            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="background:#0094ff;height:200px;margin-top:20px" ng-click="chooseCourse(course.id, course.name)">
                 {{course.name}}
             </div>
             <div class="col-sm-offset-2 col-sm-3 text-center" style="background:#0094ff;height:200px;margin-top:20px" ng-click="openAddCourse()">
