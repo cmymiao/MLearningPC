@@ -128,7 +128,13 @@ namespace TrainApp.WebApi
             //query.Skip((pageIndex - 1) * pageSize).Limit(pageSize);
             HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfoRemember"];
             String username = cookie["username"].ToString();
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             query.WhereEqualTo("tId", username);
+            var q1 = new BmobQuery();
+            q1.WhereEqualTo("courseId", courseId);
+            query.And(q1);
             var future1 = Bmob.FindTaskAsync<Class>("Class", query);
             try
             {
