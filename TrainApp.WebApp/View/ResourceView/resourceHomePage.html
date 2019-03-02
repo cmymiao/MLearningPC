@@ -6,23 +6,130 @@
     <meta charset="utf-8" />
 </head>
 <body>
-    <div class="container-fluid" ng-controller="resourceCtrl">
-        <div id="page" class="row">
-            <div id="guide" class="col-md-3 col-xs-3">
-                <ul class="nav nav-pills nav-stacked" style="margin-top:100px">
-                    <li class="disabled">所有课程</li>
-                    <li class="nav-divider"></li>
-                    <li ng-repeat="course in courses"><a href="#resourceInfo" data-toggle="pill" ng-click="changeCourse(course)">{{course.name}}</a></li>
-                </ul>
-            </div>
-            <div id="content" class="col-md-9 col-xs-9">
-                <div class="tab-content">
-                    <div id="resourceInfo" class="tab-pane fade">
-                        <div ng-include="'ResourceView/resourceInfo.html'"></div>
+    <div class="container-fluid text-center" ng-controller="resourceCtrl" style="margin:50px">
+        <div id="loadResource" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">加载中。。。</div>
+        </div>
+        <div id="deleteResource" class="modal fade" data-keyboard="false"
+             data-backdrop="static" data-role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div id="loading" class="loading">删除中。。。</div>
+        </div>
+        <div class="row text-center">
+            <h2>课程资源管理</h2>
+        </div>
+        <div class="row" style="margin-top:20px;background:#b5d5ff">
+            <h4 style="margin-left:20px">选择课程单元和知识点</h4>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-3">
+                        <select ng-model="unitId" class="form-control" ng-options="unit.id as unit.name for unit in units" ng-change="selectKnowledge(unitId)">
+                            <option value="">-----请选择课程单元-----</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <select ng-model="knowledgeId" class="form-control" ng-options="knowledge.id as knowledge.name for knowledge in knowledges">
+                            <option value="">------请选择知识点------</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-primary" ng-click="findResource(unitId, knowledgeId)">查询</button>
+                        <button class="btn btn-primary" ng-click="openUpload(unitId, knowledgeId)">上传</button>
                     </div>
                 </div>
+            </form>
+        </div>
+        <div class="row" style="background:#b5d5ff">
+            <h4 style="margin-left:20px">资源列表</h4>
+        </div>
+        <div class="row text-right" style="margin-top:20px;margin-right:50px">
+            <button class="btn btn-danger" ng-click="deleteResource()">删除</button>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <div style="text-align:center">
+                <table class="table table-hover" style="text-align:center;width:100%">
+                    <thead>
+                        <tr class="text-center" style="background:#b5d5ff">
+                            <td><input type="checkbox" ng-model="$parent.allChecked" ng-change="chooseAll()" /></td>
+                            <td>序号</td>
+                            <td>资源编号</td>
+                            <td>资源文件</td>
+                            <td>资源类型</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="resource in resources" class="text-center">
+                            <td><input type="checkbox" ng-model="resource.checked" ng-click="chooseResource($index)" /></td>
+                            <td>{{$index + 1}}</td>
+                            <td>{{resource.id}}</td>
+                            <td><a ng-click="showFileContent(resource.fileUrl)" style="text-decoration:none">{{resource.fileName}}</a></td>
+                            <td>{{resource.type}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+
+        <script type="text/ng-template" id="uploadResource.html">
+            <div>
+                <div class="modal-header">
+                    <h4 class="modal-title" id="title">上传</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">资源编号</label>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="id" class="form-control" placeholder="课程资源编号(必填项)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">资源类型</label>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="type" class="form-control" placeholder="课程资源类型(必填项)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">选择文件</label>
+                            <div class="col-sm-6">
+                                <input type="file" id="courseFile" onchange='angular.element(this).scope().fileChanged(this)'>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">
+                            <label class="col-sm-2 control-label">所属课程</label>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="course" class="form-control" ng-disabled="true">
+                            </div>
+                        </div>-->
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属单元</label>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="unit" class="form-control" ng-disabled="true">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属知识点</label>
+                            <div class="col-sm-8">
+                                <input type="text" ng-model="knowledge" class="form-control" ng-disabled="true">
+                            </div>
+                        </div>
+                    </form>
+                    <div id="uploadResource" class="modal fade" data-keyboard="false"
+                         data-backdrop="static" data-role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div id="loading" class="loading">上传中。。。</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="closeDialog()">取消</button>
+                    <button type="button" class="btn btn-primary" ng-click="submitFile()">确认</button>
+                </div>
+            </div>
+        </script>
     </div>
     <script src="../../JavaScript/myJS/homeJs.js"></script>
 </body>
