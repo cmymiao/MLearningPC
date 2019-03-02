@@ -35,6 +35,7 @@ namespace TrainApp.WebApi
             String id = cookie1["CourseId"];
             int courseId = int.Parse(id);
             var query = new BmobQuery();
+            query.Limit(300);
             query.WhereEqualTo("courseId", courseId);
             query.OrderBy("id");
             var future = Bmob.FindTaskAsync<Question>("Question", query); 
@@ -123,7 +124,6 @@ namespace TrainApp.WebApi
             query1.WhereEqualTo("courseId", courseId);
             //And操作
             query1 = query1.And(query2);
-
             var future = Bmob.FindTaskAsync<Question>("Question", query1);
             try
             {
@@ -294,14 +294,21 @@ namespace TrainApp.WebApi
                 question.rightNum = questionsInfo[i].rightNum;
                 questionList.Add(question);
             }
-
+            
             for (int i = 0; i < length; i++)
             {
-                String objectId = questionsInfo[i].objectId;
-                var future = Bmob.UpdateTaskAsync("Question", objectId, questionList[i]);
+                var query1 = new BmobQuery();
+                query1.WhereEqualTo("id", questionList[i].id);
+                var query2 = new BmobQuery();
+                query1.WhereEqualTo("courseId", questionList[i].courseId);
+                //And操作
+                query1 = query1.And(query2);
+                var future = Bmob.FindTaskAsync<Question>("Question", query1);
+                String objectId = future.Result.results[0].objectId;
+                var future1 = Bmob.UpdateTaskAsync("Question", objectId, questionList[i]);
                 try
                 {
-                    String a = future.Result.updatedAt;
+                    String a = future1.Result.updatedAt;
                     count++;
                     if (count == length)
                     {

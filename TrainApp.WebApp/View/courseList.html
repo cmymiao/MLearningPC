@@ -34,14 +34,16 @@
                 <a href="../index.html" target="_blank">退出登录</a>
             </div>
         </div>
-        <div class="row tab-content">
-            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="background:#0094ff;height:200px;margin-top:20px" ng-click="chooseCourse(course.id)">
-                {{course.name}}
+        <div class="row tab-content">           
+            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="height:230px;margin-top:20px" ng-click="chooseCourse(course.id)">
+                <div class="row course_bg" style="height:80%"></div>
+                <div class="row"><font size="5" style="margin-right:30px;">{{course.name}}</font></div>               
             </div>
-            <div class="col-sm-offset-2 col-sm-3 text-center" style="background:#0094ff;height:200px;margin-top:20px" ng-click="openAddCourse()">
-                添加课程...
+            <div class="col-sm-offset-2 col-sm-3 text-center" style="height:230px;margin-top:20px" ng-click="openAddCourse()">
+                <div class="row course_bg" style="height:80%"></div>
+                <font size="5" style="margin-right:30px">添加课程...</font>
             </div>
-        </div>
+        </di>
     </div>
 
     <script type="text/ng-template" id="addCourse.html">

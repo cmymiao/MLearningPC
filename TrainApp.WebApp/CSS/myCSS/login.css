@@ -10,4 +10,8 @@
     margin-top:100px;
 }
 
-
+.course_bg{
+    background:url(../../image/5.jpg) no-repeat center;
+    background-size:contain;
+    padding:50px;
+}

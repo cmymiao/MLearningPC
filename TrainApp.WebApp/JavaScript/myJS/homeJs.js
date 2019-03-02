@@ -1565,14 +1565,14 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
                     'unitId': unitId
                 }
             }).then(function successCallback(response) {
-                $scope.questionInfo = response.data;
+                $scope.questions = response.data;
                 alert("查询成功");
                 $scope.pageSize = 10;
-                $scope.pages = Math.ceil($scope.questionInfo.length / $scope.pageSize); //分页数
+                $scope.pages = Math.ceil($scope.questions.length / $scope.pageSize); //分页数
                 $scope.newPages = $scope.pages > 5 ? 5 : $scope.pages;
                 $scope.pageList = [];
                 $scope.selPage = 1;
-                $scope.items = $scope.questionInfo.slice(0, $scope.pageSize);
+                $scope.items = $scope.questions.slice(0, $scope.pageSize);
                 //分页要repeat的数组
                 for (var i = 0; i < $scope.newPages; i++) {
                     $scope.pageList.push(i + 1);
