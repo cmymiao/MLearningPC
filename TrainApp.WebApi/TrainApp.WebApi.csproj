@@ -126,6 +126,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JsonUtil\ResultToJson.cs" />
     <Compile Include="Startup\WebApiConfig.cs" />
+    <Compile Include="ViewModel\Class_View.cs" />
     <Compile Include="ViewModel\Course_View.cs" />
     <Compile Include="ViewModel\Examination_View.cs" />
     <Compile Include="ViewModel\Feedback_View.cs" />

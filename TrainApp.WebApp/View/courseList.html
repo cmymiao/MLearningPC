@@ -35,11 +35,11 @@
             </div>
         </div>
         <div class="row tab-content">
-            <div class="col-sm-offset-2 col-sm-3 text-center" ng-repeat="course in courses" style="background:#0094ff;height:200px;margin-top:20px" ng-click="chooseCourse(course.id, course.name)">
-                {{course.name}}
+            <div class="col-sm-offset-2 col-sm-3 text-center course_bg" ng-repeat="course in courses" style="height:200px;margin-top:25px" ng-click="chooseCourse(course.id, course.name)">
+                <div style="margin-top:15px;"><font size="5">{{course.name}}</font></div>
             </div>
-            <div class="col-sm-offset-2 col-sm-3 text-center" style="background:#0094ff;height:200px;margin-top:20px" ng-click="openAddCourse()">
-                添加课程...
+            <div class="col-sm-offset-2 col-sm-3 text-center course_bg" style="height:200px;margin-top:20px" ng-click="openAddCourse()">
+                <div style="margin-top:15px;"><font size="5">添加课程...</font></div>
             </div>
         </div>
     </div>

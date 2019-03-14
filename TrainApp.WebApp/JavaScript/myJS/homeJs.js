@@ -1553,7 +1553,8 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
 
     $scope.queryQuestion = function (unitId) {
         //console.log(courseId + " " + unitId);
-        if (unitId != "" && unitId != null && unitId != undefined) {  
+        if (unitId != "" && unitId != null && unitId != undefined) {
+            $('#loadQuestionData').modal('show');
             $http({
                 method: 'GET',
                 url: 'http://localhost:5451/TrainApp/QueryUnitQuestion',
@@ -1574,8 +1575,10 @@ app.controller('queryQuestionCtrl', function ($scope, $http, $modal) {
                 for (var i = 0; i < $scope.newPages; i++) {
                     $scope.pageList.push(i + 1);
                 }
+                $('#loadQuestionData').modal('hide');
             }, function errorCallback(response) {
                 alert("查询失败");
+                $('#loadQuestionData').modal('hide');
             });
         }
         else {

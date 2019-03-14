@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using TrainApp.WebApi.BmobModel;
+using TrainApp.WebApi.ViewModel;
 
 namespace TrainApp.WebApi.Controller
 {
@@ -82,29 +83,66 @@ namespace TrainApp.WebApi.Controller
 
         [Route("UpdateClass")]
         [HttpPost]
-        public object PostUpdateClass([FromBody]List<Class> classInfo)
+        public object PostUpdateClass([FromBody]List<Class_View> classInfo)
         {
+            HttpCookie cookie1 = HttpContext.Current.Request.Cookies["CurrentCourse"];
+            String Id = cookie1["CourseId"];
+            int courseId = int.Parse(Id);
             String result = "";
             int count = 0;
             int length = classInfo.Count;
-            for(int i = 0; i < length; i++)
+            BmobQuery query = new BmobQuery();
+            
+            for (int i = 0; i < length; i++)
             {
-                String objectId = classInfo[i].objectId;
-                var future = Bmob.UpdateTaskAsync("Class", objectId, classInfo[i]);
+                query.WhereEqualTo("id", classInfo[i].id);
+                var future = Bmob.FindTaskAsync<Class>("Class", query);
                 try
                 {
-                    String a = future.Result.updatedAt;
-                    count++;
-                    if(count == length)
+                    String objectId = future.Result.results[0].objectId;
+                    Class c = new Class();
+                    c.id = classInfo[i].id;
+                    c.name = classInfo[i].name;
+                    c.courseId = BmobInput.Parse<BmobInt>(courseId);
+                    c.schedule = classInfo[i].schedule;
+                    c.term = classInfo[i].term;
+                    var future1 = Bmob.UpdateTaskAsync("Class", objectId, c);
+                    try
                     {
-                        result = "success";
+                        String a = future1.Result.updatedAt;
+                        count++;
+                        if (count == length)
+                        {
+                            result = "success";
+                        }
                     }
-                }
-                catch
+                    catch
+                    {
+                        result = "fail";
+                    }
+                }catch
                 {
                     result = "fail";
                 }
             }
+            //for(int i = 0; i < length; i++)
+            //{
+            //    String objectId = classInfo[i].objectId;
+            //    var future = Bmob.UpdateTaskAsync("Class", objectId, classInfo[i]);
+            //    try
+            //    {
+            //        String a = future.Result.updatedAt;
+            //        count++;
+            //        if(count == length)
+            //        {
+            //            result = "success";
+            //        }
+            //    }
+            //    catch
+            //    {
+            //        result = "fail";
+            //    }
+            //}
             return result;
 
         }
